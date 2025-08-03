@@ -15,6 +15,9 @@
 
 ---
 
+https://github.com/user-attachments/assets/2634cec3-94af-4a2d-90da-44cd641f1746
+
+
 ## 🎯 What This Actually Does
 
 Claude Code Telemetry is a lightweight bridge that captures telemetry data from Claude Code and forwards it to Langfuse for visualization. You get:
