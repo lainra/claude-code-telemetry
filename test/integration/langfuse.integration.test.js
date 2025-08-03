@@ -15,10 +15,10 @@ const {
   createOTLPLogsRequest,
   createOTLPMetricsRequest,
 } = require('../helpers/otlp-test-data')
-const testServer = require('../testServer')
+const { startTestServer, stopTestServer } = require('../testServer')
 
 describe('Langfuse Integration', () => {
-  let server
+  let serverProcess
   let serverUrl
   let langfuseClient
   let testSessionId
@@ -32,17 +32,21 @@ describe('Langfuse Integration', () => {
     }
 
     // Start test server
-    const serverInstance = await testServer.start(0) // Random port
-    server = serverInstance.server
-    serverUrl = `http://localhost:${serverInstance.port}`
+    const serverInstance = await startTestServer('langfuse.integration.test.js', {
+      LANGFUSE_PUBLIC_KEY: process.env.LANGFUSE_PUBLIC_KEY,
+      LANGFUSE_SECRET_KEY: process.env.LANGFUSE_SECRET_KEY,
+      LANGFUSE_HOST: process.env.LANGFUSE_HOST || 'http://localhost:3000'
+    })
+    serverProcess = serverInstance.serverProcess
+    serverUrl = serverInstance.baseUrl
 
     // Initialize Langfuse client
     langfuseClient = new LangfuseTestClient()
   })
 
   afterAll(async () => {
-    if (server) {
-      await testServer.stop()
+    if (serverProcess) {
+      await stopTestServer(serverProcess)
     }
   })
 
