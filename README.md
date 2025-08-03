@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <strong>See exactly how your team uses Claude Code</strong><br>
+  <strong>See exactly how you/your team uses Claude Code</strong><br>
   Track costs, usage patterns, and session data in real-time
 </p>
 
