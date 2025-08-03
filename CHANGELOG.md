@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace peter-evans/create-pull-request with GitHub CLI ([7880e47](https://github.com/lainra/claude-code-telemetry/commit/7880e47a4ec8a3ff924b53c98f5896e8244885c9))
 - Remove label creation from changelog workflow ([aa2c005](https://github.com/lainra/claude-code-telemetry/commit/aa2c005fa6117d32f5a1922b329a02c8fe793613))
 - Update npm in Docker image to fix cross-spawn vulnerability ([8e7fdf4](https://github.com/lainra/claude-code-telemetry/commit/8e7fdf4fbc9f6667dbeb6c2ddf59d05db9b60518))
+- Remove custom CodeQL analysis to fix conflict with default setup ([e7308b4](https://github.com/lainra/claude-code-telemetry/commit/e7308b4cec5e9237f9c23339204b352e5f92f3c1))
 
 ### Features
 
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update minimum Node.js version to 18 ([27ec007](https://github.com/lainra/claude-code-telemetry/commit/27ec007091f94fbbbb59269f2c004d581b427392))
 - Update packages to latest compatible versions ([3363a36](https://github.com/lainra/claude-code-telemetry/commit/3363a368201d6c5b24b656788d53c47a48f9e6dc))
 - Update CHANGELOG.md ([775940f](https://github.com/lainra/claude-code-telemetry/commit/775940fd0a2413031007af9c5f3b0d3cf114f69a))
+- Update CHANGELOG.md ([7b86339](https://github.com/lainra/claude-code-telemetry/commit/7b86339f6e67046b42c0652dd6312f4ca21c9b76))
 
 ### Refactoring
 
