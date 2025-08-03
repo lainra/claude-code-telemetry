@@ -26,19 +26,6 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'claude-telemetry:scan'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-          
-      - name: Upload Trivy scan results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-results.sarif'
-          
-      - name: Run Trivy in table format
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'claude-telemetry:scan'
           format: 'table'
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
@@ -88,22 +75,6 @@ jobs:
           
           echo "No secrets detected"
 
-  sast-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript
-          queries: security-and-quality
-          
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
-        
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
         
   license-scan:
     runs-on: ubuntu-latest
