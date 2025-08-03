@@ -1,0 +1,30 @@
+# Code Owners for Claude Code Telemetry
+# These users will be automatically requested for review when someone opens a pull request
+
+# Default owner for everything
+* @lainra
+
+# Documentation
+*.md @lainra
+docs/ @lainra
+
+# Core source code
+src/ @lainra
+
+# Tests
+test/ @lainra
+*.test.js @lainra
+
+# Configuration files
+package*.json @lainra
+Dockerfile @lainra
+docker-compose*.yml @lainra
+.*rc @lainra
+.*ignore @lainra
+
+# GitHub specific files
+.github/ @lainra
+
+# Scripts
+scripts/ @lainra
+*.sh @lainra

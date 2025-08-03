@@ -1,0 +1,146 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - '*.md'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          
+      - name: Install markdown-pdf
+        run: npm install -g markdown-pdf
+        
+      - name: Create docs directory
+        run: mkdir -p _site
+        
+      - name: Generate API documentation
+        run: |
+          npx jsdoc -c .jsdoc.json || echo "Skipping JSDoc generation"
+          
+      - name: Copy documentation files
+        run: |
+          cp README.md _site/
+          cp -r docs/* _site/ 2>/dev/null || true
+          cp DEVELOPMENT.md _site/
+          cp CONTRIBUTING.md _site/
+          cp SECURITY.md _site/
+          
+      - name: Generate index.html
+        run: |
+          cat > _site/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Claude Code Telemetry Documentation</title>
+              <style>
+                  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+                  h1 { color: #333; }
+                  .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
+                  .doc-card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; transition: box-shadow 0.3s; }
+                  .doc-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+                  .doc-card h3 { margin-top: 0; }
+                  a { color: #0366d6; text-decoration: none; }
+                  a:hover { text-decoration: underline; }
+              </style>
+          </head>
+          <body>
+              <h1>📊 Claude Code Telemetry Documentation</h1>
+              <p>Production-ready telemetry bridge for Claude Code that captures observability data and forwards to Langfuse.</p>
+              
+              <div class="docs-grid">
+                  <div class="doc-card">
+                      <h3>📖 Getting Started</h3>
+                      <p>Quick start guide and overview</p>
+                      <a href="README.md">Read More →</a>
+                  </div>
+                  
+                  <div class="doc-card">
+                      <h3>🔧 Development Guide</h3>
+                      <p>Architecture, setup, and development workflow</p>
+                      <a href="DEVELOPMENT.md">Read More →</a>
+                  </div>
+                  
+                  <div class="doc-card">
+                      <h3>🤝 Contributing</h3>
+                      <p>How to contribute to the project</p>
+                      <a href="CONTRIBUTING.md">Read More →</a>
+                  </div>
+                  
+                  <div class="doc-card">
+                      <h3>🔐 Security</h3>
+                      <p>Security policy and vulnerability reporting</p>
+                      <a href="SECURITY.md">Read More →</a>
+                  </div>
+                  
+                  <div class="doc-card">
+                      <h3>🌍 Environment Variables</h3>
+                      <p>Complete configuration reference</p>
+                      <a href="ENVIRONMENT_VARIABLES.md">Read More →</a>
+                  </div>
+                  
+                  <div class="doc-card">
+                      <h3>📡 Telemetry Guide</h3>
+                      <p>Understanding the data format and events</p>
+                      <a href="TELEMETRY_GUIDE.md">Read More →</a>
+                  </div>
+                  
+                  <div class="doc-card">
+                      <h3>🧪 Testing Guide</h3>
+                      <p>Running and writing tests</p>
+                      <a href="TESTING.md">Read More →</a>
+                  </div>
+              </div>
+              
+              <hr style="margin-top: 50px;">
+              <p style="text-align: center; color: #666;">
+                  <a href="https://github.com/lainra/claude-code-telemetry">GitHub</a> • 
+                  <a href="https://github.com/lainra/claude-code-telemetry/issues">Issues</a> • 
+                  <a href="https://github.com/lainra/claude-code-telemetry/releases">Releases</a>
+              </p>
+          </body>
+          </html>
+          EOF
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+          
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-docs
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
