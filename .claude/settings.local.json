@@ -32,7 +32,12 @@
       "Bash(npm run test:coverage:*)",
       "Bash(npm run lint:*)",
       "Bash(grep:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(npx license-checker:*)",
+      "Bash(npm run test:unit:*)",
+      "Bash(npm run test:integration:*)"
     ],
     "deny": []
   }
