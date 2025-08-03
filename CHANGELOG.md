@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Python-2.0 to allowed licenses for argparse dependency ([9557add](https://github.com/lainra/claude-code-telemetry/commit/9557add65d27f368ad31c4eae19851c5692d879a))
 - Correct testServer import in langfuse integration tests ([e6f8f4c](https://github.com/lainra/claude-code-telemetry/commit/e6f8f4c99e55e122511dbfd3125fad05afdb090e))
 - Only run Langfuse integration tests with real credentials in CI ([27f41da](https://github.com/lainra/claude-code-telemetry/commit/27f41da8390c92556bd88d06753db5eb29073184))
+- Add CC-BY-4.0 to allowed licenses for caniuse-lite ([98d18b4](https://github.com/lainra/claude-code-telemetry/commit/98d18b45b9241efefb342d3fb13e88f7fb201275))
 
 ### Features
 
@@ -33,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md ([59b8a3d](https://github.com/lainra/claude-code-telemetry/commit/59b8a3db782daf79eb7005396fee5a81fce48d84))
 - Remove git-cliff and automated changelog generation ([49a08ae](https://github.com/lainra/claude-code-telemetry/commit/49a08aee8aecf2a5390ddaf9fb1c56f15dba46f9))
 - Update CHANGELOG.md ([d348dfb](https://github.com/lainra/claude-code-telemetry/commit/d348dfb76a465cb2e5396ce83055b60c7d69189b))
+- Update CHANGELOG.md ([3327273](https://github.com/lainra/claude-code-telemetry/commit/3327273258a8feb2ff24beff0d5fa5a21b7fb323))
 
 ### Refactoring
 
