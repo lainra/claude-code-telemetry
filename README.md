@@ -23,6 +23,7 @@ Claude Code Telemetry is a lightweight bridge that captures telemetry data from 
 - 📊 **Usage Metrics** - Token counts, cache hits, and tool usage
 - ⏱️ **Session Grouping** - Automatically groups work into 1-hour sessions
 - 🔍 **Full Transparency** - Every API call logged with complete details
+- 🔐 **Safe local data** - The packaged self-hosted Langfuse keeps your data local
 
 The original motivation from the author was that when using Claude Code Pro/Max, it didn't have good options for telemetry out of the box compared to API-based requests that can be integrated with various solutions and wanted to provide a secure turnkey local setup for people using Claude Code to benefit from.
 
