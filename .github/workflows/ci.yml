@@ -53,18 +53,23 @@ jobs:
     - name: Update coverage badge
       if: matrix.node-version == '18.x' && github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
-        # Extract coverage percentage
-        COVERAGE=$(node -e "
-          const coverage = require('./coverage/coverage-summary.json');
-          const pct = coverage.total.statements.pct;
-          console.log(pct.toFixed(2));
-        ")
-        
-        # Create a simple JSON for later use
-        echo "{\"coverage\": \"$COVERAGE\"}" > coverage-percentage.json
+        # Check if coverage file exists
+        if [ -f "coverage/coverage-summary.json" ]; then
+          # Extract coverage percentage
+          COVERAGE=$(node -e "
+            const coverage = require('./coverage/coverage-summary.json');
+            const pct = coverage.total.statements.pct;
+            console.log(pct.toFixed(2));
+          ")
+          
+          # Create a simple JSON for later use
+          echo "{\"coverage\": \"$COVERAGE\"}" > coverage-percentage.json
+        else
+          echo "Coverage file not found, skipping badge update"
+        fi
         
     - name: Upload coverage percentage
-      if: matrix.node-version == '18.x' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: matrix.node-version == '18.x' && github.ref == 'refs/heads/main' && github.event_name == 'push' && hashFiles('coverage-percentage.json') != ''
       uses: actions/upload-artifact@v4
       with:
         name: coverage-percentage

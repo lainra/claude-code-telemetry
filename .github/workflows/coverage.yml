@@ -20,13 +20,22 @@ jobs:
     
     - name: Download coverage artifact
       uses: actions/download-artifact@v4
+      continue-on-error: true
+      id: download
       with:
         name: coverage-percentage
         github-token: ${{ secrets.GITHUB_TOKEN }}
         run-id: ${{ github.event.workflow_run.id }}
     
     - name: Update README badge
+      if: steps.download.outcome == 'success'
       run: |
+        # Check if coverage file exists
+        if [ ! -f "coverage-percentage.json" ]; then
+          echo "Coverage percentage file not found, skipping"
+          exit 0
+        fi
+        
         # Read coverage percentage
         COVERAGE=$(jq -r '.coverage' coverage-percentage.json)
         
