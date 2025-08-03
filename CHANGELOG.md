@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump node from 20-alpine to 24-alpine ([f082176](https://github.com/lainra/claude-code-telemetry/commit/f08217667621b972148e59fb287e1d2f249f5d9b))
 - Update minimum Node.js version to 18 ([27ec007](https://github.com/lainra/claude-code-telemetry/commit/27ec007091f94fbbbb59269f2c004d581b427392))
 - Update packages to latest compatible versions ([3363a36](https://github.com/lainra/claude-code-telemetry/commit/3363a368201d6c5b24b656788d53c47a48f9e6dc))
+- Update CHANGELOG.md ([775940f](https://github.com/lainra/claude-code-telemetry/commit/775940fd0a2413031007af9c5f3b0d3cf114f69a))
 
 ### Refactoring
 
