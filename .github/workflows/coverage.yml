@@ -1,0 +1,69 @@
+name: Update Coverage Badge
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download coverage artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: coverage-percentage
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        run-id: ${{ github.event.workflow_run.id }}
+    
+    - name: Update README badge
+      run: |
+        # Read coverage percentage
+        COVERAGE=$(jq -r '.coverage' coverage-percentage.json)
+        
+        # Determine color based on coverage
+        if (( $(echo "$COVERAGE >= 90" | bc -l) )); then
+          COLOR="brightgreen"
+        elif (( $(echo "$COVERAGE >= 80" | bc -l) )); then
+          COLOR="green"  
+        elif (( $(echo "$COVERAGE >= 70" | bc -l) )); then
+          COLOR="yellow"
+        elif (( $(echo "$COVERAGE >= 60" | bc -l) )); then
+          COLOR="orange"
+        else
+          COLOR="red"
+        fi
+        
+        echo "Updating coverage badge to ${COVERAGE}% with color ${COLOR}"
+        
+        # Update README.md with new badge
+        sed -i "s|Coverage-[0-9.]*%25-[a-z]*|Coverage-${COVERAGE}%25-${COLOR}|g" README.md
+        
+    - name: Check if README changed
+      id: check-changes
+      run: |
+        if git diff --exit-code README.md; then
+          echo "changed=false" >> $GITHUB_OUTPUT
+          echo "Coverage badge is already up to date"
+        else
+          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "Coverage badge needs updating"
+        fi
+        
+    - name: Commit updated README
+      if: steps.check-changes.outputs.changed == 'true'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add README.md
+        git commit -m "chore: update coverage badge to $(jq -r '.coverage' coverage-percentage.json)% [skip ci]"
+        git push

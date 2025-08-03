@@ -49,6 +49,26 @@ jobs:
       with:
         name: coverage-report
         path: coverage/
+        
+    - name: Update coverage badge
+      if: matrix.node-version == '18.x' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        # Extract coverage percentage
+        COVERAGE=$(node -e "
+          const coverage = require('./coverage/coverage-summary.json');
+          const pct = coverage.total.statements.pct;
+          console.log(pct.toFixed(2));
+        ")
+        
+        # Create a simple JSON for later use
+        echo "{\"coverage\": \"$COVERAGE\"}" > coverage-percentage.json
+        
+    - name: Upload coverage percentage
+      if: matrix.node-version == '18.x' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-percentage
+        path: coverage-percentage.json
 
   integration-test:
     runs-on: ubuntu-latest
