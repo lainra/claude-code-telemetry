@@ -35,7 +35,7 @@ describe('Langfuse Integration', () => {
     const serverInstance = await startTestServer('langfuse.integration.test.js', {
       LANGFUSE_PUBLIC_KEY: process.env.LANGFUSE_PUBLIC_KEY,
       LANGFUSE_SECRET_KEY: process.env.LANGFUSE_SECRET_KEY,
-      LANGFUSE_HOST: process.env.LANGFUSE_HOST || 'http://localhost:3000'
+      LANGFUSE_HOST: process.env.LANGFUSE_HOST || 'http://localhost:3000',
     })
     serverProcess = serverInstance.serverProcess
     serverUrl = serverInstance.baseUrl
