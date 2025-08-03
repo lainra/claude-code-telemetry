@@ -21,12 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add BlueOak-1.0.0 to allowed licenses for jackspeak ([5926eb5](https://github.com/lainra/claude-code-telemetry/commit/5926eb5bbde67859e849eff9384b1ce68c2483a8))
 - Add trailing comma to fix linting error ([5a5e802](https://github.com/lainra/claude-code-telemetry/commit/5a5e802167f2369a089625be4a49fefb111baa38))
 - Update auto-merge config to reflect Node.js 18+ requirement ([a07e81b](https://github.com/lainra/claude-code-telemetry/commit/a07e81b628b7643f0c474511fc2e7186ad30995c))
+- Remove hostname from user email generation for privacy ([e071546](https://github.com/lainra/claude-code-telemetry/commit/e0715465dd2d7dff4c24d2a885180f336290f30e))
 
 ### Features
 
 - Add comprehensive GitHub configuration and workflows ([66d63fd](https://github.com/lainra/claude-code-telemetry/commit/66d63fd5115399ae787c0d1b35d669ad181c7f25))
 - Add Dependabot auto-merge and PR labeling ([f32ec8d](https://github.com/lainra/claude-code-telemetry/commit/f32ec8dcef3744a243628cd47f30709ecc3878d9))
 - Re-add git-cliff using official marketplace action ([a3cac9c](https://github.com/lainra/claude-code-telemetry/commit/a3cac9cc1140817a5b86ef7c60730dd84bd89351))
+- Optimize CI to skip changelog-only updates ([d43090f](https://github.com/lainra/claude-code-telemetry/commit/d43090f131ef2edd956a96524976f1d1d27e8f36))
+- Add automatic coverage badge updates ([709b0e6](https://github.com/lainra/claude-code-telemetry/commit/709b0e673e28fc047214a8e6cebb4f1459938a09))
+- Auto-update version badge on release ([2fd81ca](https://github.com/lainra/claude-code-telemetry/commit/2fd81cafc503763dc7453efa3bb15f58d8ef7ed0))
 
 ### Miscellaneous Tasks
 
@@ -47,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md ([811e513](https://github.com/lainra/claude-code-telemetry/commit/811e513e01601a690914a05cf4027ec02f19dc74))
 - Add git-cliff downloads to .gitignore ([9ae1fe2](https://github.com/lainra/claude-code-telemetry/commit/9ae1fe23d0ff81e8a945ddd02fe89f8de4ebe2ca))
 - Update CHANGELOG.md (#29) ([e613221](https://github.com/lainra/claude-code-telemetry/commit/e61322176e053e6b183247c4f65e645378e3f3c4))
+- Update CHANGELOG.md (#33) ([b505104](https://github.com/lainra/claude-code-telemetry/commit/b505104fa2543d8173cdd31515b6e3f163d24df8))
 
 ### Refactoring
 
