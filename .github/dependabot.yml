@@ -16,6 +16,14 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
+    # Group all non-major updates together
+    groups:
+      npm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     
   # Enable version updates for Docker
   - package-ecosystem: "docker"

@@ -1,0 +1,40 @@
+# Configuration for probot-auto-merge or GitHub's auto-merge feature
+
+# Merge method to use
+mergeMethod: squash
+
+# Automatically delete the branch after merge
+deleteBranchAfterMerge: true
+
+# Required status checks
+requiredChecks:
+  - "test (16.x)"
+  - "test (18.x)"
+  - "test (20.x)"
+  - "docker-build"
+  - "security"
+
+# Blocking labels (PRs with these labels won't be auto-merged)
+blockingLabels:
+  - "do-not-merge"
+  - "work-in-progress"
+  - "breaking-change"
+  - "major-update"
+
+# Rules for different types of PRs
+rules:
+  # Auto-merge Dependabot minor and patch updates
+  - match:
+      authors: ["dependabot[bot]"]
+      updateTypes: ["patch", "minor"]
+    actions:
+      merge:
+        method: squash
+        
+  # Auto-merge documentation updates
+  - match:
+      files: ["*.md", "docs/**"]
+      authors: ["lainra"]
+    actions:
+      merge:
+        method: squash

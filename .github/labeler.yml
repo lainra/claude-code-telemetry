@@ -1,0 +1,50 @@
+# Configuration for actions/labeler
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/*.md'
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'yarn.lock'
+
+docker:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'Dockerfile*'
+      - 'docker-compose*.yml'
+      - '.dockerignore'
+
+github-actions:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/workflows/*'
+      - '.github/actions/*'
+
+tests:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.test.js'
+      - 'test/**'
+      - 'jest.config.js'
+
+source:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/**'
+      - '!src/**/*.test.js'
+
+configuration:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.*rc'
+      - '.*rc.js'
+      - '.*rc.json'
+      - '.env*'
+      - 'config/**'
