@@ -61,7 +61,7 @@
     ".env.example"
   ],
   "dependencies": {
-    "dotenv": "^16.4.5",
+    "dotenv": "^17.2.1",
     "langfuse": "^3.38.4",
     "pino": "^9.2.0",
     "pino-pretty": "^11.2.1",
