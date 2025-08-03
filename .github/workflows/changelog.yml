@@ -20,12 +20,13 @@ jobs:
           fetch-depth: 0
           
       - name: Generate changelog
-        uses: orhun/git-cliff-action@v4
-        with:
-          config: .github/cliff.toml
-          args: --verbose
-        env:
-          OUTPUT: CHANGELOG.md
+        run: |
+          # Install git-cliff
+          curl -L https://github.com/orhun/git-cliff/releases/download/v2.0.0/git-cliff-2.0.0-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          sudo mv git-cliff-2.0.0/git-cliff /usr/local/bin/
+          
+          # Generate changelog
+          git-cliff --config .github/cliff.toml --output CHANGELOG.md --verbose
           
       - name: Check if changelog was updated
         id: git-diff

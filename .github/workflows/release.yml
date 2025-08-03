@@ -63,29 +63,25 @@ jobs:
         cache-to: type=gha,mode=max
     
     - name: Create Release
-      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: |
-          ## What's Changed
-          
-          See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
-          
-          ## Docker Image
-          
-          ```bash
-          docker pull ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-          ```
-          
-          ## Quick Start
-          
-          ```bash
-          git clone https://github.com/${{ github.repository }}.git
-          cd claude-code-telemetry
-          ./quickstart.sh
-          ```
-        draft: false
-        prerelease: false
+      run: |
+        gh release create "${{ github.ref_name }}" \
+          --title "Release ${{ github.ref_name }}" \
+          --notes "## What's Changed
+        
+        See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+        
+        ## Docker Image
+        
+        \`\`\`bash
+        docker pull ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+        \`\`\`
+        
+        ## Quick Start
+        
+        \`\`\`bash
+        git clone https://github.com/${{ github.repository }}.git
+        cd claude-code-telemetry
+        ./quickstart.sh
+        \`\`\`"
