@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add CC-BY-4.0 to allowed licenses for caniuse-lite ([98d18b4](https://github.com/lainra/claude-code-telemetry/commit/98d18b45b9241efefb342d3fb13e88f7fb201275))
 - Add BlueOak-1.0.0 to allowed licenses for jackspeak ([5926eb5](https://github.com/lainra/claude-code-telemetry/commit/5926eb5bbde67859e849eff9384b1ce68c2483a8))
 - Add trailing comma to fix linting error ([5a5e802](https://github.com/lainra/claude-code-telemetry/commit/5a5e802167f2369a089625be4a49fefb111baa38))
+- Update auto-merge config to reflect Node.js 18+ requirement ([a07e81b](https://github.com/lainra/claude-code-telemetry/commit/a07e81b628b7643f0c474511fc2e7186ad30995c))
 
 ### Features
 
@@ -43,6 +44,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md ([ecf3a79](https://github.com/lainra/claude-code-telemetry/commit/ecf3a79ed70943d38ce6e92ff11a8895b077154b))
 - Update CHANGELOG.md ([bbe3014](https://github.com/lainra/claude-code-telemetry/commit/bbe3014fade492d992e793bc77431786c3fb2df0))
 - Update CHANGELOG.md ([8db4493](https://github.com/lainra/claude-code-telemetry/commit/8db44933cba825a9004fb5a29e4029d31bceb75e))
+- Update CHANGELOG.md ([811e513](https://github.com/lainra/claude-code-telemetry/commit/811e513e01601a690914a05cf4027ec02f19dc74))
+- Add git-cliff downloads to .gitignore ([9ae1fe2](https://github.com/lainra/claude-code-telemetry/commit/9ae1fe23d0ff81e8a945ddd02fe89f8de4ebe2ca))
+- Update CHANGELOG.md (#29) ([e613221](https://github.com/lainra/claude-code-telemetry/commit/e61322176e053e6b183247c4f65e645378e3f3c4))
 
 ### Refactoring
 
