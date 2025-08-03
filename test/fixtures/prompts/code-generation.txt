@@ -1,0 +1,1 @@
+Write a Python function that calculates the factorial of a number using recursion. Include error handling for negative numbers.

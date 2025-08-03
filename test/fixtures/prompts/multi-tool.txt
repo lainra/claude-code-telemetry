@@ -1,0 +1,1 @@
+Create a new file called 'hello.py' with a simple Python hello world program, then read it back to confirm it was created correctly.

@@ -1,0 +1,1 @@
+Try to read a file that doesn't exist at /nonexistent/path/file.txt and explain what happened.

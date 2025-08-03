@@ -1,0 +1,10 @@
+This is a sample text file for testing Claude's file reading capabilities.
+
+It contains multiple lines and some basic formatting.
+
+The purpose is to verify that:
+1. Claude can read files correctly
+2. File operations generate proper telemetry
+3. The content is accurately processed
+
+End of sample file.

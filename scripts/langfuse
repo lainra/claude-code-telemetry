@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Helper script for managing Langfuse + Telemetry Bridge setup
+
+COMPOSE_CMD="docker compose -f langfuse-official/docker-compose.yml -f docker-compose.langfuse.yml --env-file .env.langfuse"
+
+case "$1" in
+    up)
+        $COMPOSE_CMD up -d
+        ;;
+    down)
+        $COMPOSE_CMD down
+        ;;
+    logs)
+        shift
+        $COMPOSE_CMD logs -f "$@"
+        ;;
+    ps)
+        $COMPOSE_CMD ps
+        ;;
+    restart)
+        $COMPOSE_CMD restart "$2"
+        ;;
+    *)
+        echo "Usage: $0 {up|down|logs|ps|restart}"
+        echo ""
+        echo "Commands:"
+        echo "  up       - Start all services"
+        echo "  down     - Stop all services"
+        echo "  logs     - View logs (optionally specify service)"
+        echo "  ps       - Show service status"
+        echo "  restart  - Restart a service"
+        echo ""
+        echo "Examples:"
+        echo "  $0 up"
+        echo "  $0 logs langfuse-web"
+        echo "  $0 restart telemetry-bridge"
+        exit 1
+        ;;
+esac

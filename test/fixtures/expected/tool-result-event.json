@@ -1,0 +1,23 @@
+{
+  "event_type": "claude_code.tool_result",
+  "required_attributes": [
+    "session.id",
+    "tool_name",
+    "success",
+    "duration_ms"
+  ],
+  "validation": {
+    "tool_name": {
+      "type": "string",
+      "enum": ["Read", "Write", "Edit", "MultiEdit", "Bash", "Search", "List", "WebFetch"]
+    },
+    "success": {
+      "type": "string",
+      "enum": ["true", "false"]
+    },
+    "duration_ms": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    }
+  }
+}

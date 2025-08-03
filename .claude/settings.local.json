@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(git checkout:*)",
+      "Bash(chmod:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(node:*)",
+      "Bash(lsof:*)",
+      "Bash(rm:*)",
+      "Bash(npm start)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(cat:*)",
+      "Bash(claude --version)",
+      "Bash(DEBUG=true npm start)",
+      "Bash(ls:*)",
+      "Bash(mv:*)",
+      "Bash(find:*)",
+      "Bash(npm test:*)",
+      "Bash(curl:*)",
+      "Bash(env)",
+      "Bash(./test-telemetry.sh:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:cloud.langfuse.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:langfuse.com)",
+      "Bash(git push:*)",
+      "Bash(npm run test:coverage:*)",
+      "Bash(npm run lint:*)",
+      "Bash(grep:*)",
+      "Bash(npm ls:*)"
+    ],
+    "deny": []
+  }
+}

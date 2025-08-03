@@ -1,0 +1,1 @@
+Please read the file at test/fixtures/mock-files/sample.txt and summarize its contents.

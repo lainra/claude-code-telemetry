@@ -1,0 +1,35 @@
+version: '3.8'
+
+# This is the standalone telemetry bridge configuration
+# For a complete setup with Langfuse included, use: ./scripts/setup-langfuse.sh
+#
+# For this standalone setup:
+# 1. Copy .env.example to .env and set your Langfuse credentials
+# 2. Run: docker compose up
+
+services:
+  telemetry-server:
+    build: .
+    ports:
+      - "${OTLP_RECEIVER_PORT:-4318}:${OTLP_RECEIVER_PORT:-4318}"
+    environment:
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+      - LANGFUSE_HOST=${LANGFUSE_HOST:-http://host.docker.internal:3000}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NODE_ENV=${NODE_ENV:-production}
+      - OTLP_RECEIVER_PORT=${OTLP_RECEIVER_PORT:-4318}
+      # Always bind to 0.0.0.0 in Docker to accept external connections
+      - OTLP_RECEIVER_HOST=0.0.0.0
+      - SESSION_TIMEOUT=${SESSION_TIMEOUT:-3600000}
+      - MAX_REQUEST_SIZE=${MAX_REQUEST_SIZE:-10485760}
+      - API_KEY=${API_KEY:-}
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4318/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs

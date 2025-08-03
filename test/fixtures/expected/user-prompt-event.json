@@ -1,0 +1,23 @@
+{
+  "event_type": "claude_code.user_prompt",
+  "required_attributes": [
+    "session.id",
+    "user.email",
+    "prompt",
+    "prompt_length"
+  ],
+  "validation": {
+    "session.id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9-]+$"
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt_length": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    }
+  }
+}
