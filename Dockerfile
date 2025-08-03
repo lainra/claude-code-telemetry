@@ -2,6 +2,9 @@ FROM node:24-alpine
 
 WORKDIR /app
 
+# Update npm to latest version to fix vulnerabilities
+RUN npm install -g npm@latest
+
 # Copy package files
 COPY package*.json ./
 
