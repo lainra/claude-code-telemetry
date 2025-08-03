@@ -8,9 +8,9 @@ deleteBranchAfterMerge: true
 
 # Required status checks
 requiredChecks:
-  - "test (16.x)"
   - "test (18.x)"
   - "test (20.x)"
+  - "test (22.x)"
   - "docker-build"
   - "security"
 
