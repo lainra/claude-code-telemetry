@@ -8,8 +8,6 @@ updates:
       day: "monday"
       time: "10:00"
     open-pull-requests-limit: 10
-    reviewers:
-      - "lainra"
     labels:
       - "dependencies"
       - "npm"
@@ -32,8 +30,6 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "10:00"
-    reviewers:
-      - "lainra"
     labels:
       - "dependencies"
       - "docker"
@@ -48,8 +44,6 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "10:00"
-    reviewers:
-      - "lainra"
     labels:
       - "dependencies"
       - "github-actions"
