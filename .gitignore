@@ -64,3 +64,6 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Downloaded tools
+git-cliff-*
