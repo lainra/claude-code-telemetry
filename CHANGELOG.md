@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update packages to latest compatible versions ([3363a36](https://github.com/lainra/claude-code-telemetry/commit/3363a368201d6c5b24b656788d53c47a48f9e6dc))
 - Update CHANGELOG.md ([775940f](https://github.com/lainra/claude-code-telemetry/commit/775940fd0a2413031007af9c5f3b0d3cf114f69a))
 - Update CHANGELOG.md ([7b86339](https://github.com/lainra/claude-code-telemetry/commit/7b86339f6e67046b42c0652dd6312f4ca21c9b76))
+- Update CHANGELOG.md ([59b8a3d](https://github.com/lainra/claude-code-telemetry/commit/59b8a3db782daf79eb7005396fee5a81fce48d84))
 
 ### Refactoring
 
