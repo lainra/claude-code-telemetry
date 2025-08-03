@@ -47,8 +47,8 @@
   },
   "homepage": "https://github.com/lainra/claude-code-telemetry#readme",
   "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   },
   "files": [
     "src/",
