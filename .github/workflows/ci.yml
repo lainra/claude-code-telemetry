@@ -80,9 +80,9 @@ jobs:
     - name: Run integration tests
       run: npm run test:integration
       env:
-        LANGFUSE_PUBLIC_KEY: ${{ secrets.TEST_LANGFUSE_PUBLIC_KEY || 'pk-lf-test-key' }}
-        LANGFUSE_SECRET_KEY: ${{ secrets.TEST_LANGFUSE_SECRET_KEY || 'sk-lf-test-key' }}
-        LANGFUSE_HOST: http://localhost:3000
+        LANGFUSE_PUBLIC_KEY: ${{ secrets.TEST_LANGFUSE_PUBLIC_KEY }}
+        LANGFUSE_SECRET_KEY: ${{ secrets.TEST_LANGFUSE_SECRET_KEY }}
+        LANGFUSE_HOST: ${{ secrets.TEST_LANGFUSE_HOST }}
 
   docker-build:
     runs-on: ubuntu-latest
