@@ -40,9 +40,9 @@ PROJECT_ID="proj-$(openssl rand -hex 6)"
 PUBLIC_KEY="pk-lf-$(openssl rand -hex 16)"
 SECRET_KEY="sk-lf-$(openssl rand -hex 16)"
 
-# Use hostname and timestamp for unique email
-UNIQUE_SUFFIX="$(hostname | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')-$(date +%s)"
-USER_EMAIL="admin-${UNIQUE_SUFFIX}@claude-telemetry.local"
+# Use timestamp for unique email (no hostname for privacy)
+TIMESTAMP="$(date +%s)"
+USER_EMAIL="admin-${TIMESTAMP}@claude-telemetry.local"
 
 # Generate a secure password
 USER_PASSWORD="$(openssl rand -base64 12)"
