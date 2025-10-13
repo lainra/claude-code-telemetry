@@ -63,7 +63,7 @@
   "dependencies": {
     "dotenv": "^17.2.1",
     "langfuse": "^3.38.4",
-    "pino": "^9.7.0",
+    "pino": "^10.0.0",
     "pino-pretty": "^13.1.1",
     "uuid": "^11.1.0"
   },
