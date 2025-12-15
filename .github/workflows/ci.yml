@@ -44,7 +44,7 @@ jobs:
         SKIP_INTEGRATION_TESTS: true
     
     - name: Upload coverage reports
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: matrix.node-version == '18.x'
       with:
         name: coverage-report
@@ -70,7 +70,7 @@ jobs:
         
     - name: Upload coverage percentage
       if: matrix.node-version == '18.x' && github.ref == 'refs/heads/main' && github.event_name == 'push' && hashFiles('coverage-percentage.json') != ''
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: coverage-percentage
         path: coverage-percentage.json
