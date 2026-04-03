@@ -12,7 +12,7 @@ describe('Helper Functions', () => {
       if (value.doubleValue !== undefined) return parseFloat(value.doubleValue)
       if (value.boolValue !== undefined) return value.boolValue
       if (value.arrayValue !== undefined) {
-        return value.arrayValue.values.map(v => extractAttributeValue(v))
+        return value.arrayValue.values.map((v) => extractAttributeValue(v))
       }
       if (value.kvlistValue !== undefined) {
         const obj = {}
@@ -47,11 +47,7 @@ describe('Helper Functions', () => {
     test('extracts array values', () => {
       const value = {
         arrayValue: {
-          values: [
-            { stringValue: 'a' },
-            { stringValue: 'b' },
-            { intValue: '1' },
-          ],
+          values: [{ stringValue: 'a' }, { stringValue: 'b' }, { intValue: '1' }],
         },
       }
       expect(extractAttributeValue(value)).toEqual(['a', 'b', 1])
@@ -152,8 +148,12 @@ describe('Helper Functions', () => {
       }
 
       expect(validateConfig({ publicKey: 'pk-test', secretKey: 'sk-test' })).toEqual([])
-      expect(validateConfig({ publicKey: '', secretKey: 'sk-test' })).toContain('LANGFUSE_PUBLIC_KEY is required')
-      expect(validateConfig({ publicKey: 'pk-test', secretKey: '' })).toContain('LANGFUSE_SECRET_KEY is required')
+      expect(validateConfig({ publicKey: '', secretKey: 'sk-test' })).toContain(
+        'LANGFUSE_PUBLIC_KEY is required',
+      )
+      expect(validateConfig({ publicKey: 'pk-test', secretKey: '' })).toContain(
+        'LANGFUSE_SECRET_KEY is required',
+      )
     })
   })
 

@@ -1,19 +1,21 @@
 // Session Handler class extracted for better testability
 // const { Langfuse } = require('langfuse') // Imported but not used directly in this file
 const pino = require('pino')
+const { writeReference, getFallbackPath } = require('./offlineFallback')
 
 const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
-  transport: process.env.NODE_ENV === 'development'
-    ? {
-        target: 'pino-pretty',
-        options: {
-          translateTime: 'HH:MM:ss.l',
-          ignore: 'pid,hostname',
-          colorize: true,
-        },
-      }
-    : undefined,
+  transport:
+    process.env.NODE_ENV === 'development'
+      ? {
+          target: 'pino-pretty',
+          options: {
+            translateTime: 'HH:MM:ss.l',
+            ignore: 'pid,hostname',
+            colorize: true,
+          },
+        }
+      : undefined,
 })
 
 class SessionHandler {
@@ -76,7 +78,8 @@ class SessionHandler {
     const attrs = resourceAttributes || {}
     return {
       name: attrs['service.name'] || 'claude-code',
-      version: attrs['service.version'] || attrs['claude.version'] || attrs['app.version'] || 'unknown',
+      version:
+        attrs['service.version'] || attrs['claude.version'] || attrs['app.version'] || 'unknown',
       instance: attrs['service.instance.id'] || attrs['host.name'],
       telemetrySDK: attrs['telemetry.sdk.name'],
       terminalType: attrs['terminal.type'],
@@ -85,7 +88,9 @@ class SessionHandler {
 
   processLogRecord(logRecord, resource) {
     const eventName = logRecord.body?.stringValue
-    const timestamp = logRecord.timeUnixNano ? new Date(Number(logRecord.timeUnixNano) / 1000000).toISOString() : new Date().toISOString()
+    const timestamp = logRecord.timeUnixNano
+      ? new Date(Number(logRecord.timeUnixNano) / 1000000).toISOString()
+      : new Date().toISOString()
     const attrs = extractAttributesArray(logRecord.attributes)
 
     logger.debug({ eventName, attrs, sessionId: this.sessionId }, 'Processing event')
@@ -154,7 +159,9 @@ class SessionHandler {
     const requestId = attrs.request_id
 
     const startTime = new Date(timestamp)
-    const endTime = attrs['api.response_time'] ? new Date(new Date(timestamp).getTime() + (attrs['api.response_time'] || 0)) : new Date()
+    const endTime = attrs['api.response_time']
+      ? new Date(new Date(timestamp).getTime() + (attrs['api.response_time'] || 0))
+      : new Date()
     const durationMs = attrs['api.response_time'] || attrs.duration || endTime - startTime
 
     // Update metrics
@@ -194,14 +201,17 @@ class SessionHandler {
     // Create generation span
     const modelType = model.includes('haiku') ? 'routing' : 'generation'
 
-    logger.debug({
-      sessionId: this.sessionId,
-      traceId: this.currentTrace?.id,
-      model,
-      modelType,
-      hasTrace: !!this.currentTrace,
-      langfuseAvailable: !!this.langfuse,
-    }, 'Creating generation observation')
+    logger.debug(
+      {
+        sessionId: this.sessionId,
+        traceId: this.currentTrace?.id,
+        model,
+        modelType,
+        hasTrace: !!this.currentTrace,
+        langfuseAvailable: !!this.langfuse,
+      },
+      'Creating generation observation',
+    )
 
     const span = this.langfuse.generation({
       name: `${modelType}-${model}`,
@@ -244,11 +254,14 @@ class SessionHandler {
       version: this.metadata.release,
     })
 
-    logger.debug({
-      sessionId: this.sessionId,
-      generationId: span?.id,
-      modelType,
-    }, 'Generation observation created')
+    logger.debug(
+      {
+        sessionId: this.sessionId,
+        generationId: span?.id,
+        modelType,
+      },
+      'Generation observation created',
+    )
 
     if (modelType === 'generation') {
       this.currentSpan = span
@@ -281,7 +294,8 @@ class SessionHandler {
     const source = attrs.source || 'automated'
 
     this.toolCallCount++
-    const startTime = durationMs > 0 ? new Date(new Date(timestamp).getTime() - durationMs) : new Date(timestamp)
+    const startTime =
+      durationMs > 0 ? new Date(new Date(timestamp).getTime() - durationMs) : new Date(timestamp)
 
     // Track tool sequence
     this.toolSequence.push({
@@ -341,13 +355,16 @@ class SessionHandler {
     const errorMessage = attrs.error_message || attrs.error || 'Unknown error'
     const statusCode = attrs.status_code || attrs.status || 0
 
-    logger.error({
-      sessionId: this.sessionId,
-      model,
-      error: errorMessage,
-      statusCode,
-      timestamp,
-    }, 'API error occurred')
+    logger.error(
+      {
+        sessionId: this.sessionId,
+        model,
+        error: errorMessage,
+        statusCode,
+        timestamp,
+      },
+      'API error occurred',
+    )
 
     if (this.currentTrace) {
       this.langfuse.event({
@@ -372,10 +389,13 @@ class SessionHandler {
       case 'claude_code.session.count': {
         // Session count metric
         const sessionCount = dataPoint.asDouble || dataPoint.asInt || 1
-        logger.info({
-          sessionId: this.sessionId,
-          count: sessionCount,
-        }, 'Session count metric')
+        logger.info(
+          {
+            sessionId: this.sessionId,
+            count: sessionCount,
+          },
+          'Session count metric',
+        )
 
         // Create a session started event
         if (this.currentTrace) {
@@ -397,7 +417,10 @@ class SessionHandler {
         const cost = dataPoint.asDouble || 0
         const costModel = attrs.model || 'unknown'
         this.totalCost += cost
-        logger.info({ sessionId: this.sessionId, cost, model: costModel, totalCost: this.totalCost }, 'Cost metric received')
+        logger.info(
+          { sessionId: this.sessionId, cost, model: costModel, totalCost: this.totalCost },
+          'Cost metric received',
+        )
         break
       }
 
@@ -425,14 +448,17 @@ class SessionHandler {
             break
         }
 
-        logger.info({
-          sessionId: this.sessionId,
-          tokens,
-          tokenType,
-          model: tokenModel,
-          totalTokens: this.totalTokens,
-          cacheTokens: this.cacheTokens,
-        }, 'Token metric received')
+        logger.info(
+          {
+            sessionId: this.sessionId,
+            tokens,
+            tokenType,
+            model: tokenModel,
+            totalTokens: this.totalTokens,
+            cacheTokens: this.cacheTokens,
+          },
+          'Token metric received',
+        )
         break
       }
 
@@ -461,21 +487,27 @@ class SessionHandler {
           })
         }
 
-        logger.info({
-          sessionId: this.sessionId,
-          lines,
-          type: modificationType,
-        }, 'Code modification metric')
+        logger.info(
+          {
+            sessionId: this.sessionId,
+            lines,
+            type: modificationType,
+          },
+          'Code modification metric',
+        )
         break
       }
 
       case 'claude_code.pull_request.count': {
         // PR creation metric
         const prCount = dataPoint.asDouble || dataPoint.asInt || 1
-        logger.info({
-          sessionId: this.sessionId,
-          count: prCount,
-        }, 'Pull request created')
+        logger.info(
+          {
+            sessionId: this.sessionId,
+            count: prCount,
+          },
+          'Pull request created',
+        )
 
         if (this.currentTrace) {
           this.langfuse.event({
@@ -494,10 +526,13 @@ class SessionHandler {
       case 'claude_code.commit.count': {
         // Git commit metric
         const commitCount = dataPoint.asDouble || dataPoint.asInt || 1
-        logger.info({
-          sessionId: this.sessionId,
-          count: commitCount,
-        }, 'Git commit created')
+        logger.info(
+          {
+            sessionId: this.sessionId,
+            count: commitCount,
+          },
+          'Git commit created',
+        )
 
         if (this.currentTrace) {
           this.langfuse.event({
@@ -519,12 +554,15 @@ class SessionHandler {
         const tool = attrs.tool
         const language = attrs.language
 
-        logger.info({
-          sessionId: this.sessionId,
-          tool,
-          decision,
-          language,
-        }, 'Tool permission decision')
+        logger.info(
+          {
+            sessionId: this.sessionId,
+            tool,
+            decision,
+            language,
+          },
+          'Tool permission decision',
+        )
 
         if (this.currentTrace) {
           this.langfuse.event({
@@ -545,10 +583,13 @@ class SessionHandler {
       case 'claude_code.active_time.total': {
         // Active time metric
         const activeTime = dataPoint.asDouble || 0
-        logger.info({
-          sessionId: this.sessionId,
-          activeTimeSeconds: activeTime,
-        }, 'Active time metric')
+        logger.info(
+          {
+            sessionId: this.sessionId,
+            activeTimeSeconds: activeTime,
+          },
+          'Active time metric',
+        )
 
         if (this.currentTrace) {
           this.langfuse.event({
@@ -565,12 +606,15 @@ class SessionHandler {
       }
 
       default:
-        logger.debug({
-          sessionId: this.sessionId,
-          metricName: metric.name,
-          value: dataPoint.asDouble || dataPoint.asInt || 0,
-          attributes: attrs,
-        }, 'Unknown metric received')
+        logger.debug(
+          {
+            sessionId: this.sessionId,
+            metricName: metric.name,
+            value: dataPoint.asDouble || dataPoint.asInt || 0,
+            attributes: attrs,
+          },
+          'Unknown metric received',
+        )
     }
   }
 
@@ -672,10 +716,19 @@ class SessionHandler {
       })
 
       // Calculate quality score
-      const cacheHitRate = this.totalTokens > 0 ? this.latencies.api.reduce((sum, l) => sum + l, 0) / this.totalTokens : 0
+      const cacheHitRate =
+        this.totalTokens > 0
+          ? this.latencies.api.reduce((sum, l) => sum + l, 0) / this.totalTokens
+          : 0
       const avgResponseTime = apiPercentiles ? apiPercentiles.avg : 0
-      const toolSuccessRate = this.toolSequence.length > 0 ? this.toolSequence.filter((t) => t.success).length / this.toolSequence.length : 1
-      const qualityScore = Math.min(100, Math.round((cacheHitRate * 20) + (toolSuccessRate * 40) + (avgResponseTime < 1000 ? 40 : 20)))
+      const toolSuccessRate =
+        this.toolSequence.length > 0
+          ? this.toolSequence.filter((t) => t.success).length / this.toolSequence.length
+          : 1
+      const qualityScore = Math.min(
+        100,
+        Math.round(cacheHitRate * 20 + toolSuccessRate * 40 + (avgResponseTime < 1000 ? 40 : 20)),
+      )
 
       this.langfuse.score({
         traceId: sessionSummary.id,
@@ -696,12 +749,27 @@ class SessionHandler {
       }
 
       logger.info({ sessionId: this.sessionId, totalCost: this.totalCost }, 'Session finalized')
-      const baseUrl = (process.env.LANGFUSE_HOST || 'http://localhost:3000').replace(/\/api\/public.*$/, '')
+      const baseUrl = (process.env.LANGFUSE_HOST || 'http://localhost:3000').replace(
+        /\/api\/public.*$/,
+        '',
+      )
       logger.info(`View at: ${baseUrl}/sessions/${this.sessionId}`)
 
       await retry(() => this.langfuse.flushAsync())
     } catch (error) {
       logger.error({ error, sessionId: this.sessionId }, 'Error finalizing session')
+      try {
+        writeReference(this)
+        logger.info(
+          { sessionId: this.sessionId, fallbackPath: getFallbackPath() },
+          'Session reference saved to offline fallback',
+        )
+      } catch (fallbackError) {
+        logger.error(
+          { fallbackError, sessionId: this.sessionId },
+          'Failed to write offline fallback',
+        )
+      }
     }
   }
 }

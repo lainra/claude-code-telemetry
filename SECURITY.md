@@ -35,6 +35,7 @@ We take security vulnerabilities seriously. Please report security issues privat
 ### Security Measures
 
 This project implements:
+
 - No storage of sensitive data (prompts optional)
 - Local-only operation by default
 - Secure credential handling via environment variables

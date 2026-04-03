@@ -126,17 +126,17 @@ describe('Langfuse Integration', () => {
     })
 
     // Wait a bit for processing
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // Get trace with observations
     const traces = await langfuseClient.getTraces(10, testSessionId)
-    const conversationTrace = traces.find(t => t.name?.startsWith('conversation-'))
+    const conversationTrace = traces.find((t) => t.name?.startsWith('conversation-'))
     expect(conversationTrace).toBeDefined()
 
     const fullTrace = await langfuseClient.getTrace(conversationTrace.id)
 
     // Verify generation observation
-    const generations = fullTrace.observations?.filter(o => o.type === 'GENERATION') || []
+    const generations = fullTrace.observations?.filter((o) => o.type === 'GENERATION') || []
     expect(generations).toHaveLength(1)
 
     const generation = generations[0]
@@ -185,7 +185,7 @@ describe('Langfuse Integration', () => {
     })
 
     // Wait for processing
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // Verify session has the metrics data
     const traces = await langfuseClient.getTraces(10, testSessionId)
@@ -221,14 +221,14 @@ describe('Langfuse Integration', () => {
     })
 
     // Wait for processing
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // Get updated trace
     const fullTrace = await langfuseClient.getTrace(conversationTrace.id)
 
     // Verify tool event
-    const events = fullTrace.observations?.filter(o => o.type === 'EVENT') || []
-    const toolEvent = events.find(e => e.name?.includes('tool-'))
+    const events = fullTrace.observations?.filter((o) => o.type === 'EVENT') || []
+    const toolEvent = events.find((e) => e.name?.includes('tool-'))
 
     expect(toolEvent).toBeDefined()
     expect(toolEvent.name).toBe('tool-Read')
@@ -280,7 +280,7 @@ describe('Langfuse Integration', () => {
     })
 
     // Wait for processing
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000))
 
     // Validate the complete flow
     const validation = await langfuseClient.verifyTelemetryFlow(testSessionId)

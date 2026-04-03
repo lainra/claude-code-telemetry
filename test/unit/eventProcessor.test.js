@@ -21,12 +21,13 @@ jest.mock('../../src/sessionHandler', () => ({
     // Simple implementation for testing
     const result = {}
     if (attrs && Array.isArray(attrs)) {
-      attrs.forEach(attr => {
+      attrs.forEach((attr) => {
         const key = attr.key
-        const value = attr.value?.stringValue ||
-                     attr.value?.intValue ||
-                     attr.value?.doubleValue ||
-                     attr.value?.boolValue
+        const value =
+          attr.value?.stringValue ||
+          attr.value?.intValue ||
+          attr.value?.doubleValue ||
+          attr.value?.boolValue
         if (key && value !== undefined) {
           result[key] = value
         }
@@ -224,9 +225,7 @@ describe('Event Processor', () => {
       const logRecord = {
         body: { stringValue: 'claude_code.user_prompt' },
         timeUnixNano: Date.now() * 1000000,
-        attributes: [
-          { key: 'prompt_length', value: { stringValue: '10' } },
-        ],
+        attributes: [{ key: 'prompt_length', value: { stringValue: '10' } }],
       }
 
       const resource = {}

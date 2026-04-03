@@ -15,10 +15,12 @@ This guide consolidates all information about Claude Code's telemetry implementa
 ## Overview
 
 Claude Code uses OpenTelemetry (OTLP) to send telemetry data in two forms:
+
 - **Logs**: Events like user prompts, API requests, tool usage
 - **Metrics**: Numerical data like costs, tokens, code changes
 
 The telemetry flows as follows:
+
 ```
 Claude Code → OTLP/HTTP → Bridge Server → Langfuse API
              (JSON logs)   (Parse & Map)   (Traces/Spans)
@@ -64,6 +66,7 @@ Claude sends events as OTLP log records with the event name in the body.
 ### Event Types
 
 #### `claude_code.user_prompt`
+
 - **When**: User sends a prompt to Claude
 - **Attributes**:
   - `session.id`: Unique session identifier
@@ -72,6 +75,7 @@ Claude sends events as OTLP log records with the event name in the body.
   - `user.email`: User email if available
 
 #### `claude_code.api_request`
+
 - **When**: Claude makes API calls (typically 2 per prompt)
 - **Models**: `claude-3-haiku` (routing), `claude-3-opus` or `claude-3-5-sonnet` (generation)
 - **Attributes**:
@@ -84,6 +88,7 @@ Claude sends events as OTLP log records with the event name in the body.
   - `api.response_time`: Alternative duration field
 
 #### `claude_code.tool_result`
+
 - **When**: Claude uses tools (Read, Write, Bash, etc.)
 - **Attributes**:
   - `tool_name`: Tool name (or `tool` in legacy format)
@@ -91,6 +96,7 @@ Claude sends events as OTLP log records with the event name in the body.
   - `duration_ms`: Execution time in milliseconds
 
 #### `claude_code.tool_decision`
+
 - **When**: User makes a decision about tool usage permissions
 - **Attributes**:
   - `decision`: User's decision ("accept"/"reject")
@@ -98,6 +104,7 @@ Claude sends events as OTLP log records with the event name in the body.
   - `tool_name`: Tool being decided on
 
 #### `claude_code.api_error`
+
 - **When**: API calls fail
 - **Attributes**:
   - `model`: Model that failed
@@ -111,12 +118,14 @@ Metrics provide numerical measurements of Claude's operation.
 ### Confirmed Metrics (Received in Testing)
 
 #### `claude_code.cost.usage`
+
 - **Type**: Sum
 - **Unit**: USD
 - **Purpose**: Track API costs per model
 - **Example**: Haiku: $0.006, Opus: $0.265
 
 #### `claude_code.token.usage`
+
 - **Type**: Sum
 - **Unit**: tokens
 - **Purpose**: Detailed token tracking
@@ -125,6 +134,7 @@ Metrics provide numerical measurements of Claude's operation.
   - `model`: Model name
 
 #### `claude_code.lines_of_code.count`
+
 - **Type**: Sum
 - **Unit**: lines
 - **Purpose**: Track code modifications
@@ -133,6 +143,7 @@ Metrics provide numerical measurements of Claude's operation.
 - **Triggered**: When modifying files with Edit/Write tools
 
 #### `claude_code.commit.count`
+
 - **Type**: Sum
 - **Unit**: commits
 - **Purpose**: Track git commits created
@@ -151,32 +162,33 @@ These metrics are fully implemented and handled, but occur less frequently:
 
 ### Events - 100% Coverage ✅
 
-| Event | Documentation | Observed | Implemented |
-|-------|--------------|----------|-------------|
-| `user_prompt` | ✅ Yes | ✅ Yes | ✅ Yes |
-| `api_request` | ✅ Yes | ✅ Yes | ✅ Yes |
-| `tool_result` | ✅ Yes | ✅ Yes | ✅ Yes |
-| `tool_decision` | ✅ Yes | ✅ Yes | ✅ Yes |
-| `api_error` | ✅ Yes | ✅ Yes | ✅ Yes |
+| Event           | Documentation | Observed | Implemented |
+| --------------- | ------------- | -------- | ----------- |
+| `user_prompt`   | ✅ Yes        | ✅ Yes   | ✅ Yes      |
+| `api_request`   | ✅ Yes        | ✅ Yes   | ✅ Yes      |
+| `tool_result`   | ✅ Yes        | ✅ Yes   | ✅ Yes      |
+| `tool_decision` | ✅ Yes        | ✅ Yes   | ✅ Yes      |
+| `api_error`     | ✅ Yes        | ✅ Yes   | ✅ Yes      |
 
 ### Metrics - 100% Implementation ✅
 
-| Metric | Purpose | Frequency | Implemented |
-|--------|---------|-----------|-------------|
-| `cost.usage` | Track API costs | Every API call | ✅ Yes |
-| `token.usage` | Track token usage | Every API call | ✅ Yes |
-| `lines_of_code.count` | Track code changes | When editing files | ✅ Yes |
-| `commit.count` | Track git commits | When committing | ✅ Yes |
-| `session.count` | Track new sessions | Session start | ✅ Yes |
-| `pull_request.count` | Track PRs created | When creating PRs | ✅ Yes |
-| `code_edit_tool.decision` | Track tool permissions | User decisions | ✅ Yes |
-| `active_time.total` | Track active time | Periodically | ✅ Yes |
+| Metric                    | Purpose                | Frequency          | Implemented |
+| ------------------------- | ---------------------- | ------------------ | ----------- |
+| `cost.usage`              | Track API costs        | Every API call     | ✅ Yes      |
+| `token.usage`             | Track token usage      | Every API call     | ✅ Yes      |
+| `lines_of_code.count`     | Track code changes     | When editing files | ✅ Yes      |
+| `commit.count`            | Track git commits      | When committing    | ✅ Yes      |
+| `session.count`           | Track new sessions     | Session start      | ✅ Yes      |
+| `pull_request.count`      | Track PRs created      | When creating PRs  | ✅ Yes      |
+| `code_edit_tool.decision` | Track tool permissions | User decisions     | ✅ Yes      |
+| `active_time.total`       | Track active time      | Periodically       | ✅ Yes      |
 
 ## Real-World Examples
 
 ### Typical User Prompt Flow
 
 1. **User Prompt Event**
+
    ```json
    {
      "body": "claude_code.user_prompt",
@@ -188,6 +200,7 @@ These metrics are fully implemented and handled, but occur less frequently:
    ```
 
 2. **Haiku API Request** (routing)
+
    ```json
    {
      "body": "claude_code.api_request",
@@ -217,17 +230,20 @@ These metrics are fully implemented and handled, but occur less frequently:
 ### Code Modification Example
 
 When Claude modifies a file:
+
 ```json
 {
   "name": "claude_code.lines_of_code.count",
   "sum": {
-    "dataPoints": [{
-      "asDouble": 10,
-      "attributes": [
-        { "key": "type", "value": { "stringValue": "added" } },
-        { "key": "session.id", "value": { "stringValue": "abc-123" } }
-      ]
-    }]
+    "dataPoints": [
+      {
+        "asDouble": 10,
+        "attributes": [
+          { "key": "type", "value": { "stringValue": "added" } },
+          { "key": "session.id", "value": { "stringValue": "abc-123" } }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -255,6 +271,7 @@ When Claude modifies a file:
 ### Cost Observations
 
 Typical costs per interaction:
+
 - Haiku (routing): $0.001-0.002
 - Opus (generation): $0.22-0.28
 - Total per prompt: ~$0.23-0.30
@@ -264,4 +281,3 @@ Typical costs per interaction:
 - Multiple API calls per prompt (typically 2)
 - Cache usage significantly reduces costs
 - Tool execution adds to response time
-

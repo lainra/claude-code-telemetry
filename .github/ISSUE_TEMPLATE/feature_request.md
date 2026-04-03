@@ -4,7 +4,6 @@ about: Suggest an idea for this project
 title: '[FEATURE] '
 labels: 'enhancement'
 assignees: ''
-
 ---
 
 **Is your feature request related to a problem? Please describe.**
@@ -21,6 +20,7 @@ Explain how this feature would be used and who would benefit from it.
 
 **Example**
 If applicable, provide an example of how this feature would work:
+
 ```javascript
 // Example code or configuration
 ```

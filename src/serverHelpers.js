@@ -50,6 +50,7 @@ function createConfig() {
     apiKey: process.env.API_KEY,
     nodeEnv: process.env.NODE_ENV || 'production',
     logLevel: process.env.LOG_LEVEL || 'info',
+    fallbackFile: process.env.FALLBACK_FILE || '',
   }
 }
 

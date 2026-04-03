@@ -60,10 +60,14 @@ describe('SessionHandler', () => {
       flushAsync: jest.fn(() => Promise.resolve()),
     }
 
-    session = new SessionHandler('test-session-id', {
-      'service.name': 'test-service',
-      'service.version': '1.0.0',
-    }, mockLangfuseInstance)
+    session = new SessionHandler(
+      'test-session-id',
+      {
+        'service.name': 'test-service',
+        'service.version': '1.0.0',
+      },
+      mockLangfuseInstance,
+    )
   })
 
   describe('constructor', () => {
@@ -79,7 +83,9 @@ describe('SessionHandler', () => {
     })
 
     test('throws error if sessionId is not provided', () => {
-      expect(() => new SessionHandler(null, {}, mockLangfuseInstance)).toThrow('SessionHandler requires a sessionId')
+      expect(() => new SessionHandler(null, {}, mockLangfuseInstance)).toThrow(
+        'SessionHandler requires a sessionId',
+      )
     })
   })
 
@@ -520,18 +526,24 @@ describe('SessionHandler', () => {
 
     test('tracks consecutive tool calls in sequence', () => {
       // First tool in sequence
-      session.handleToolResult({
-        tool_name: 'Read',
-        success: 'true',
-        duration_ms: '100',
-      }, '2024-07-31T10:00:00Z')
+      session.handleToolResult(
+        {
+          tool_name: 'Read',
+          success: 'true',
+          duration_ms: '100',
+        },
+        '2024-07-31T10:00:00Z',
+      )
 
       // Second tool in sequence
-      session.handleToolResult({
-        tool_name: 'Edit',
-        success: 'true',
-        duration_ms: '200',
-      }, '2024-07-31T10:00:01Z')
+      session.handleToolResult(
+        {
+          tool_name: 'Edit',
+          success: 'true',
+          duration_ms: '200',
+        },
+        '2024-07-31T10:00:01Z',
+      )
 
       expect(session.toolSequence).toHaveLength(2)
       expect(session.toolSequence[0].name).toBe('Read')
@@ -744,9 +756,7 @@ describe('SessionHandler', () => {
 describe('Helper Functions', () => {
   describe('extractAttributesArray', () => {
     test('extracts string attributes', () => {
-      const attributes = [
-        { key: 'name', value: { stringValue: 'test' } },
-      ]
+      const attributes = [{ key: 'name', value: { stringValue: 'test' } }]
       const result = extractAttributesArray(attributes)
       expect(result).toEqual({ name: 'test' })
     })
@@ -771,10 +781,7 @@ describe('Helper Functions', () => {
           key: 'items',
           value: {
             arrayValue: {
-              values: [
-                { stringValue: 'item1' },
-                { stringValue: 'item2' },
-              ],
+              values: [{ stringValue: 'item1' }, { stringValue: 'item2' }],
             },
           },
         },
@@ -819,9 +826,7 @@ describe('Helper Functions', () => {
     })
 
     test('handles unknown value types', () => {
-      const attributes = [
-        { key: 'unknown', value: { unknownType: 'value' } },
-      ]
+      const attributes = [{ key: 'unknown', value: { unknownType: 'value' } }]
 
       const result = extractAttributesArray(attributes)
       expect(result).toEqual({ unknown: null })

@@ -81,27 +81,36 @@ function processUserPrompt(attrs, standardAttrs, timestamp, session) {
   const promptLength = parseInt(attrs.prompt_length || attrs['prompt.length'] || '0', 10)
   const eventTimestamp = attrs['event.timestamp'] || standardAttrs.timestamp
 
-  logger.debug({ attrs, prompt, promptLength, standardAttrs }, 'Processing user prompt with attributes')
+  logger.debug(
+    { attrs, prompt, promptLength, standardAttrs },
+    'Processing user prompt with attributes',
+  )
 
   // Pass all attributes to session handler
-  session.handleUserPrompt({
-    prompt,
-    prompt_length: promptLength,
-    'user.email': standardAttrs.userEmail,
-    'event.timestamp': eventTimestamp,
-    'session.id': standardAttrs.sessionId,
-    'organization.id': standardAttrs.organizationId,
-    'user.account_uuid': standardAttrs.userAccountUuid,
-    'terminal.type': standardAttrs.terminalType,
-    'app.version': standardAttrs.appVersion,
-  }, eventTimestamp)
+  session.handleUserPrompt(
+    {
+      prompt,
+      prompt_length: promptLength,
+      'user.email': standardAttrs.userEmail,
+      'event.timestamp': eventTimestamp,
+      'session.id': standardAttrs.sessionId,
+      'organization.id': standardAttrs.organizationId,
+      'user.account_uuid': standardAttrs.userAccountUuid,
+      'terminal.type': standardAttrs.terminalType,
+      'app.version': standardAttrs.appVersion,
+    },
+    eventTimestamp,
+  )
 
-  logger.info({
-    sessionId: session.sessionId,
-    userEmail: standardAttrs.userEmail,
-    promptLength,
-    timestamp: eventTimestamp,
-  }, 'User prompt received')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      userEmail: standardAttrs.userEmail,
+      promptLength,
+      timestamp: eventTimestamp,
+    },
+    'User prompt received',
+  )
 
   return {
     type: 'user_prompt',
@@ -130,38 +139,47 @@ function processApiRequest(attrs, standardAttrs, timestamp, session) {
   const inputTokens = parseInt(attrs.input_tokens || attrs['tokens.input'] || '0', 10)
   const outputTokens = parseInt(attrs.output_tokens || attrs['tokens.output'] || '0', 10)
   const cacheReadTokens = parseInt(attrs.cache_read_tokens || attrs['cache.read_tokens'] || '0', 10)
-  const cacheCreationTokens = parseInt(attrs.cache_creation_tokens || attrs['cache.creation_tokens'] || '0', 10)
+  const cacheCreationTokens = parseInt(
+    attrs.cache_creation_tokens || attrs['cache.creation_tokens'] || '0',
+    10,
+  )
   const costUsd = parseFloat(attrs.cost_usd || attrs.cost || attrs['cost.usd'] || '0')
   const durationMs = parseInt(attrs.duration_ms || attrs.duration || '0', 10)
   const requestId = attrs.request_id || attrs['request.id']
   const eventTimestamp = attrs['event.timestamp'] || standardAttrs.timestamp
 
   // Pass all attributes to session handler
-  session.handleApiRequest({
-    model,
-    input_tokens: inputTokens,
-    output_tokens: outputTokens,
-    cache_read_tokens: cacheReadTokens,
-    cache_creation_tokens: cacheCreationTokens,
-    cost: costUsd,
-    duration_ms: durationMs,
-    'api.response_time': durationMs,
-    request_id: requestId,
-    'event.timestamp': eventTimestamp,
-    ...standardAttrs,
-  }, eventTimestamp)
+  session.handleApiRequest(
+    {
+      model,
+      input_tokens: inputTokens,
+      output_tokens: outputTokens,
+      cache_read_tokens: cacheReadTokens,
+      cache_creation_tokens: cacheCreationTokens,
+      cost: costUsd,
+      duration_ms: durationMs,
+      'api.response_time': durationMs,
+      request_id: requestId,
+      'event.timestamp': eventTimestamp,
+      ...standardAttrs,
+    },
+    eventTimestamp,
+  )
 
-  logger.info({
-    sessionId: session.sessionId,
-    model,
-    inputTokens,
-    outputTokens,
-    cacheReadTokens,
-    cacheCreationTokens,
-    costUsd,
-    durationMs,
-    requestId,
-  }, 'API request processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      model,
+      inputTokens,
+      outputTokens,
+      cacheReadTokens,
+      cacheCreationTokens,
+      costUsd,
+      durationMs,
+      requestId,
+    },
+    'API request processed',
+  )
 
   return {
     type: 'api_request',
@@ -194,22 +212,28 @@ function processApiError(attrs, standardAttrs, timestamp, session) {
   const requestId = attrs.request_id || attrs['request.id']
   const eventTimestamp = attrs['event.timestamp'] || standardAttrs.timestamp
 
-  session.handleApiError({
-    error_message: errorMessage,
-    status_code: statusCode,
-    model,
-    request_id: requestId,
-    'event.timestamp': eventTimestamp,
-    ...standardAttrs,
-  }, eventTimestamp)
+  session.handleApiError(
+    {
+      error_message: errorMessage,
+      status_code: statusCode,
+      model,
+      request_id: requestId,
+      'event.timestamp': eventTimestamp,
+      ...standardAttrs,
+    },
+    eventTimestamp,
+  )
 
-  logger.warn({
-    sessionId: session.sessionId,
-    errorMessage,
-    statusCode,
-    model,
-    requestId,
-  }, 'API error occurred')
+  logger.warn(
+    {
+      sessionId: session.sessionId,
+      errorMessage,
+      statusCode,
+      model,
+      requestId,
+    },
+    'API error occurred',
+  )
 
   return {
     type: 'api_error',
@@ -236,20 +260,26 @@ function processToolResult(attrs, standardAttrs, timestamp, session) {
   const durationMs = parseInt(attrs.duration_ms || attrs.duration || '0', 10)
   const eventTimestamp = attrs['event.timestamp'] || standardAttrs.timestamp
 
-  session.handleToolResult({
-    tool_name: toolName,
-    success,
-    duration_ms: durationMs,
-    'event.timestamp': eventTimestamp,
-    ...standardAttrs,
-  }, eventTimestamp)
+  session.handleToolResult(
+    {
+      tool_name: toolName,
+      success,
+      duration_ms: durationMs,
+      'event.timestamp': eventTimestamp,
+      ...standardAttrs,
+    },
+    eventTimestamp,
+  )
 
-  logger.info({
-    sessionId: session.sessionId,
-    toolName,
-    success,
-    durationMs,
-  }, 'Tool result processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      toolName,
+      success,
+      durationMs,
+    },
+    'Tool result processed',
+  )
 
   return {
     type: 'tool_result',
@@ -276,12 +306,15 @@ function processToolDecision(attrs, standardAttrs, timestamp, session) {
   const toolName = attrs.tool_name || attrs.tool || 'unknown'
   const eventTimestamp = attrs['event.timestamp'] || standardAttrs.timestamp
 
-  logger.info({
-    sessionId: session.sessionId,
-    decision,
-    source,
-    toolName,
-  }, 'Tool decision processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      decision,
+      source,
+      toolName,
+    },
+    'Tool decision processed',
+  )
 
   // Create event in current trace if exists
   if (session.currentTrace && session.langfuse) {

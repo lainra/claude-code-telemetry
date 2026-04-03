@@ -23,9 +23,10 @@ expect.extend({
     const pass = Number.isInteger(received) && received >= 1 && received <= 65535
     return {
       pass,
-      message: () => pass
-        ? `expected ${received} not to be a valid port`
-        : `expected ${received} to be a valid port (1-65535)`,
+      message: () =>
+        pass
+          ? `expected ${received} not to be a valid port`
+          : `expected ${received} to be a valid port (1-65535)`,
     }
   },
 })
@@ -43,5 +44,5 @@ if (process.env.DEBUG_TESTS !== 'true') {
 }
 
 // Add skipIf helper for conditional test execution
-global.describe.skipIf = (condition) => condition ? describe.skip : describe
-global.test.skipIf = (condition) => condition ? test.skip : test
+global.describe.skipIf = (condition) => (condition ? describe.skip : describe)
+global.test.skipIf = (condition) => (condition ? test.skip : test)

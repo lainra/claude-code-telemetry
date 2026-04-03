@@ -10,7 +10,7 @@ jest.mock('../../src/sessionHandler', () => ({
   extractAttributesArray: jest.fn((attrs) => {
     const result = {}
     if (attrs) {
-      attrs.forEach(attr => {
+      attrs.forEach((attr) => {
         result[attr.key] = attr.value.stringValue || attr.value.intValue || attr.value.doubleValue
       })
     }
@@ -53,12 +53,14 @@ describe('Request Handlers', () => {
   describe('handleTraces', () => {
     test('accepts valid traces payload', () => {
       const data = JSON.stringify({
-        resourceSpans: [{
-          resource: {
-            attributes: [],
+        resourceSpans: [
+          {
+            resource: {
+              attributes: [],
+            },
+            scopeSpans: [],
           },
-          scopeSpans: [],
-        }],
+        ],
       })
 
       handleTraces(data, mockRes, mockSessions, mockLangfuse)
@@ -85,28 +87,34 @@ describe('Request Handlers', () => {
       const { SessionHandler } = require('../../src/sessionHandler')
 
       const data = JSON.stringify({
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeMetrics: [
+              {
+                metrics: [
+                  {
+                    name: 'claude_code.cost.usage',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asDouble: 0.15,
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: 'test-session' } },
+                            { key: 'model', value: { stringValue: 'claude-3-opus' } },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             ],
           },
-          scopeMetrics: [{
-            metrics: [{
-              name: 'claude_code.cost.usage',
-              sum: {
-                dataPoints: [{
-                  asDouble: 0.15,
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [
-                    { key: 'session.id', value: { stringValue: 'test-session' } },
-                    { key: 'model', value: { stringValue: 'claude-3-opus' } },
-                  ],
-                }],
-              },
-            }],
-          }],
-        }],
+        ],
       })
 
       handleMetrics(data, mockRes, mockSessions, mockLangfuse)
@@ -121,20 +129,28 @@ describe('Request Handlers', () => {
 
     test('handles metrics without session ID', () => {
       const data = JSON.stringify({
-        resourceMetrics: [{
-          resource: { attributes: [] },
-          scopeMetrics: [{
-            metrics: [{
-              name: 'claude_code.cost.usage',
-              sum: {
-                dataPoints: [{
-                  asDouble: 0.1,
-                  attributes: [],
-                }],
+        resourceMetrics: [
+          {
+            resource: { attributes: [] },
+            scopeMetrics: [
+              {
+                metrics: [
+                  {
+                    name: 'claude_code.cost.usage',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asDouble: 0.1,
+                          attributes: [],
+                        },
+                      ],
+                    },
+                  },
+                ],
               },
-            }],
-          }],
-        }],
+            ],
+          },
+        ],
       })
 
       handleMetrics(data, mockRes, mockSessions, mockLangfuse)
@@ -148,20 +164,28 @@ describe('Request Handlers', () => {
       process.env.LOG_LEVEL = 'debug'
 
       const data = JSON.stringify({
-        resourceMetrics: [{
-          resource: { attributes: [] },
-          scopeMetrics: [{
-            metrics: [{
-              name: 'test.metric',
-              gauge: {
-                dataPoints: [{
-                  asDouble: 42,
-                  attributes: [],
-                }],
+        resourceMetrics: [
+          {
+            resource: { attributes: [] },
+            scopeMetrics: [
+              {
+                metrics: [
+                  {
+                    name: 'test.metric',
+                    gauge: {
+                      dataPoints: [
+                        {
+                          asDouble: 42,
+                          attributes: [],
+                        },
+                      ],
+                    },
+                  },
+                ],
               },
-            }],
-          }],
-        }],
+            ],
+          },
+        ],
       })
 
       handleMetrics(data, mockRes, mockSessions, mockLangfuse)
@@ -186,23 +210,27 @@ describe('Request Handlers', () => {
   describe('handleLogs', () => {
     test('processes logs with session ID', () => {
       const data = JSON.stringify({
-        resourceLogs: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceLogs: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeLogs: [
+              {
+                logRecords: [
+                  {
+                    timeUnixNano: Date.now() * 1000000,
+                    body: { stringValue: 'claude_code.user_prompt' },
+                    attributes: [
+                      { key: 'session.id', value: { stringValue: 'test-session' } },
+                      { key: 'prompt', value: { stringValue: 'Test prompt' } },
+                    ],
+                  },
+                ],
+              },
             ],
           },
-          scopeLogs: [{
-            logRecords: [{
-              timeUnixNano: Date.now() * 1000000,
-              body: { stringValue: 'claude_code.user_prompt' },
-              attributes: [
-                { key: 'session.id', value: { stringValue: 'test-session' } },
-                { key: 'prompt', value: { stringValue: 'Test prompt' } },
-              ],
-            }],
-          }],
-        }],
+        ],
       })
 
       handleLogs(data, mockRes, mockSessions, mockLangfuse)
@@ -215,19 +243,25 @@ describe('Request Handlers', () => {
 
     test('creates session from user ID and timestamp', () => {
       const data = JSON.stringify({
-        resourceLogs: [{
-          resource: { attributes: [] },
-          scopeLogs: [{
-            logRecords: [{
-              timeUnixNano: Date.now() * 1000000,
-              body: { stringValue: 'claude_code.user_prompt' },
-              attributes: [
-                { key: 'user.email', value: { stringValue: 'test@example.com' } },
-                { key: 'event.timestamp', value: { stringValue: '2024-01-01T12:00:00Z' } },
-              ],
-            }],
-          }],
-        }],
+        resourceLogs: [
+          {
+            resource: { attributes: [] },
+            scopeLogs: [
+              {
+                logRecords: [
+                  {
+                    timeUnixNano: Date.now() * 1000000,
+                    body: { stringValue: 'claude_code.user_prompt' },
+                    attributes: [
+                      { key: 'user.email', value: { stringValue: 'test@example.com' } },
+                      { key: 'event.timestamp', value: { stringValue: '2024-01-01T12:00:00Z' } },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       })
 
       handleLogs(data, mockRes, mockSessions, mockLangfuse)
@@ -240,16 +274,22 @@ describe('Request Handlers', () => {
 
     test('logs without session are ignored', () => {
       const data = JSON.stringify({
-        resourceLogs: [{
-          resource: { attributes: [] },
-          scopeLogs: [{
-            logRecords: [{
-              timeUnixNano: Date.now() * 1000000,
-              body: { stringValue: 'test log' },
-              attributes: [],
-            }],
-          }],
-        }],
+        resourceLogs: [
+          {
+            resource: { attributes: [] },
+            scopeLogs: [
+              {
+                logRecords: [
+                  {
+                    timeUnixNano: Date.now() * 1000000,
+                    body: { stringValue: 'test log' },
+                    attributes: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       })
 
       handleLogs(data, mockRes, mockSessions, mockLangfuse)

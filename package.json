@@ -22,7 +22,10 @@
     "format:check": "prettier --check \"**/*.{js,json,md}\"",
     "docker:build": "docker build -t claude-code-telemetry .",
     "docker:run": "docker-compose up",
-    "clean": "rm -rf test-results test-runs *.log"
+    "clean": "rm -rf test-results test-runs *.log",
+    "quality": "bash scripts/ci/run_quality_gates.sh",
+    "security": "bash scripts/ci/run_security_review.sh",
+    "hooks:install": "bash scripts/install-hooks.sh"
   },
   "keywords": [
     "claude",
@@ -56,7 +59,7 @@
     "scripts/",
     "test/fixtures/",
     "README.md",
-    "CLAUDE.md",
+    "AGENTS.md",
     "LICENSE",
     ".env.example"
   ],

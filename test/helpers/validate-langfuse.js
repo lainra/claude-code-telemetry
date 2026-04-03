@@ -38,7 +38,7 @@ function langfuseRequest(path, method = 'GET') {
 
     const req = client.request(options, (res) => {
       let data = ''
-      res.on('data', chunk => {
+      res.on('data', (chunk) => {
         data += chunk
       })
       res.on('end', () => {
@@ -99,11 +99,11 @@ async function validateComprehensive() {
 
     if (traces.data?.length > 0) {
       // Check for conversation traces
-      const conversationTrace = traces.data.find(t => t.name?.startsWith('conversation-'))
+      const conversationTrace = traces.data.find((t) => t.name?.startsWith('conversation-'))
       validationResults.traces.conversation = !!conversationTrace
 
       // Check for session-summary trace
-      const summaryTrace = traces.data.find(t => t.name === 'session-summary')
+      const summaryTrace = traces.data.find((t) => t.name === 'session-summary')
       validationResults.traces.sessionSummary = !!summaryTrace
 
       console.log(`   ✅ Found ${traces.data.length} traces`)
@@ -121,22 +121,30 @@ async function validateComprehensive() {
         validationResults.metadata.user = !!(metadata.userAccountUuid || metadata.userEmail)
         validationResults.metadata.terminal = !!metadata.terminalType
 
-        console.log(`   ${metadata.organizationId ? '✅' : '❌'} Organization ID: ${metadata.organizationId || 'missing'}`)
-        console.log(`   ${metadata.userAccountUuid ? '✅' : '❌'} User Account UUID: ${metadata.userAccountUuid || 'missing'}`)
-        console.log(`   ${metadata.terminalType ? '✅' : '❌'} Terminal Type: ${metadata.terminalType || 'missing'}`)
+        console.log(
+          `   ${metadata.organizationId ? '✅' : '❌'} Organization ID: ${metadata.organizationId || 'missing'}`,
+        )
+        console.log(
+          `   ${metadata.userAccountUuid ? '✅' : '❌'} User Account UUID: ${metadata.userAccountUuid || 'missing'}`,
+        )
+        console.log(
+          `   ${metadata.terminalType ? '✅' : '❌'} Terminal Type: ${metadata.terminalType || 'missing'}`,
+        )
 
         // Check observations
         const observations = traceDetails.observations || []
-        const generations = observations.filter(o => o.type === 'GENERATION')
-        const events = observations.filter(o => o.type === 'EVENT')
-        const spans = observations.filter(o => o.type === 'SPAN')
+        const generations = observations.filter((o) => o.type === 'GENERATION')
+        const events = observations.filter((o) => o.type === 'EVENT')
+        const spans = observations.filter((o) => o.type === 'SPAN')
 
         validationResults.observations.generations = generations.length
         validationResults.observations.events = events.length
         validationResults.observations.spans = spans.length
 
         console.log('\n   📊 Observations:')
-        console.log(`      ${generations.length > 0 ? '✅' : '❌'} Generations: ${generations.length}`)
+        console.log(
+          `      ${generations.length > 0 ? '✅' : '❌'} Generations: ${generations.length}`,
+        )
         console.log(`      ${events.length > 0 ? '✅' : '❌'} Events: ${events.length}`)
         console.log(`      ${spans.length > 0 ? '✅' : '❌'} Spans: ${spans.length}`)
 
@@ -149,18 +157,22 @@ async function validateComprehensive() {
 
           console.log('\n   🤖 Generation details:')
           console.log(`      Model: ${gen.model}`)
-          console.log(`      ${gen.usage?.total ? '✅' : '❌'} Token usage: ${gen.usage?.input || 0} in, ${gen.usage?.output || 0} out`)
-          console.log(`      ${gen.metadata?.cache ? '✅' : '❌'} Cache tokens: ${gen.metadata?.cache?.read || 0} read, ${gen.metadata?.cache?.creation || 0} creation`)
+          console.log(
+            `      ${gen.usage?.total ? '✅' : '❌'} Token usage: ${gen.usage?.input || 0} in, ${gen.usage?.output || 0} out`,
+          )
+          console.log(
+            `      ${gen.metadata?.cache ? '✅' : '❌'} Cache tokens: ${gen.metadata?.cache?.read || 0} read, ${gen.metadata?.cache?.creation || 0} creation`,
+          )
           console.log(`      ${gen.metadata?.cost ? '✅' : '❌'} Cost: $${gen.metadata?.cost || 0}`)
         }
 
         // Check events
         if (events.length > 0) {
-          const eventTypes = [...new Set(events.map(e => e.name))]
+          const eventTypes = [...new Set(events.map((e) => e.name))]
           console.log(`\n   📌 Event types: ${eventTypes.join(', ')}`)
 
-          validationResults.metrics.tools = eventTypes.some(e => e.includes('tool'))
-          validationResults.metrics.code = eventTypes.some(e => e.includes('code'))
+          validationResults.metrics.tools = eventTypes.some((e) => e.includes('tool'))
+          validationResults.metrics.code = eventTypes.some((e) => e.includes('code'))
         }
       }
 
@@ -171,11 +183,11 @@ async function validateComprehensive() {
 
         // Check scores
         const scores = summaryDetails.scores || []
-        validationResults.scores.quality = scores.some(s => s.name === 'quality')
-        validationResults.scores.efficiency = scores.some(s => s.name === 'efficiency')
+        validationResults.scores.quality = scores.some((s) => s.name === 'quality')
+        validationResults.scores.efficiency = scores.some((s) => s.name === 'efficiency')
 
         console.log(`   ${scores.length > 0 ? '✅' : '❌'} Scores: ${scores.length} found`)
-        scores.forEach(score => {
+        scores.forEach((score) => {
           console.log(`      - ${score.name}: ${score.value} - ${score.comment || 'No comment'}`)
         })
 
@@ -189,7 +201,9 @@ async function validateComprehensive() {
         console.log(`      Total tokens: ${output.totalTokens || 0}`)
 
         if (output.cacheTokens) {
-          console.log(`      Cache tokens: ${output.cacheTokens.read || 0} read, ${output.cacheTokens.creation || 0} creation`)
+          console.log(
+            `      Cache tokens: ${output.cacheTokens.read || 0} read, ${output.cacheTokens.creation || 0} creation`,
+          )
         }
 
         if (output.additionalMetrics) {
@@ -197,7 +211,9 @@ async function validateComprehensive() {
           console.log(`      Active time: ${output.additionalMetrics.activeTime || 0}s`)
           console.log(`      Commits: ${output.additionalMetrics.commitCount || 0}`)
           console.log(`      Pull requests: ${output.additionalMetrics.pullRequestCount || 0}`)
-          console.log(`      Tool decisions: ${output.additionalMetrics.toolDecisions?.length || 0}`)
+          console.log(
+            `      Tool decisions: ${output.additionalMetrics.toolDecisions?.length || 0}`,
+          )
         }
       }
     }
@@ -223,14 +239,14 @@ async function validateComprehensive() {
       { name: 'Efficiency score', passed: validationResults.scores.efficiency },
     ]
 
-    const passed = checks.filter(c => c.passed).length
+    const passed = checks.filter((c) => c.passed).length
     const total = checks.length
 
-    checks.forEach(check => {
+    checks.forEach((check) => {
       console.log(`   ${check.passed ? '✅' : '❌'} ${check.name}`)
     })
 
-    console.log(`\n   Score: ${passed}/${total} (${Math.round(passed / total * 100)}%)`)
+    console.log(`\n   Score: ${passed}/${total} (${Math.round((passed / total) * 100)}%)`)
 
     if (passed === total) {
       console.log('\n   🎉 ALL VALIDATIONS PASSED!')

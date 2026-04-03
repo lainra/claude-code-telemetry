@@ -17,32 +17,40 @@ describe('Metrics Integration Tests', () => {
   describe('Cost Metrics', () => {
     test('processes cost usage metrics with session', async () => {
       const metric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
-              { key: 'service.version', value: { stringValue: '3.0.0' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [
+                { key: 'service.name', value: { stringValue: 'claude-code' } },
+                { key: 'service.version', value: { stringValue: '3.0.0' } },
+              ],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'claude-code-telemetry' },
+                metrics: [
+                  {
+                    name: 'claude_code.cost.usage',
+                    description: 'Cost in USD',
+                    unit: 'USD',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asDouble: 0.265,
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: 'test-session-cost' } },
+                            { key: 'model', value: { stringValue: 'claude-3-opus' } },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             ],
           },
-          scopeMetrics: [{
-            scope: { name: 'claude-code-telemetry' },
-            metrics: [{
-              name: 'claude_code.cost.usage',
-              description: 'Cost in USD',
-              unit: 'USD',
-              sum: {
-                dataPoints: [{
-                  asDouble: 0.265,
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [
-                    { key: 'session.id', value: { stringValue: 'test-session-cost' } },
-                    { key: 'model', value: { stringValue: 'claude-3-opus' } },
-                  ],
-                }],
-              },
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {
@@ -60,32 +68,38 @@ describe('Metrics Integration Tests', () => {
   describe('Token Metrics', () => {
     test('processes token usage metrics', async () => {
       const metric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'claude-code-telemetry' },
+                metrics: [
+                  {
+                    name: 'claude_code.token.usage',
+                    description: 'Token count',
+                    unit: 'tokens',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asDouble: 1500,
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: 'test-session-tokens' } },
+                            { key: 'type', value: { stringValue: 'input' } },
+                            { key: 'model', value: { stringValue: 'claude-3-opus' } },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             ],
           },
-          scopeMetrics: [{
-            scope: { name: 'claude-code-telemetry' },
-            metrics: [{
-              name: 'claude_code.token.usage',
-              description: 'Token count',
-              unit: 'tokens',
-              sum: {
-                dataPoints: [{
-                  asDouble: 1500,
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [
-                    { key: 'session.id', value: { stringValue: 'test-session-tokens' } },
-                    { key: 'type', value: { stringValue: 'input' } },
-                    { key: 'model', value: { stringValue: 'claude-3-opus' } },
-                  ],
-                }],
-              },
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {
@@ -101,31 +115,37 @@ describe('Metrics Integration Tests', () => {
   describe('Code Modification Metrics', () => {
     test('processes lines of code added metric', async () => {
       const metric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'claude-code-telemetry' },
+                metrics: [
+                  {
+                    name: 'claude_code.lines_of_code.count',
+                    description: 'Lines of code',
+                    unit: 'lines',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asDouble: 42,
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: 'test-session-lines' } },
+                            { key: 'type', value: { stringValue: 'added' } },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             ],
           },
-          scopeMetrics: [{
-            scope: { name: 'claude-code-telemetry' },
-            metrics: [{
-              name: 'claude_code.lines_of_code.count',
-              description: 'Lines of code',
-              unit: 'lines',
-              sum: {
-                dataPoints: [{
-                  asDouble: 42,
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [
-                    { key: 'session.id', value: { stringValue: 'test-session-lines' } },
-                    { key: 'type', value: { stringValue: 'added' } },
-                  ],
-                }],
-              },
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {
@@ -139,31 +159,37 @@ describe('Metrics Integration Tests', () => {
 
     test('processes lines of code removed metric', async () => {
       const metric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'claude-code-telemetry' },
+                metrics: [
+                  {
+                    name: 'claude_code.lines_of_code.count',
+                    description: 'Lines of code',
+                    unit: 'lines',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asDouble: 15,
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: 'test-session-lines' } },
+                            { key: 'type', value: { stringValue: 'removed' } },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             ],
           },
-          scopeMetrics: [{
-            scope: { name: 'claude-code-telemetry' },
-            metrics: [{
-              name: 'claude_code.lines_of_code.count',
-              description: 'Lines of code',
-              unit: 'lines',
-              sum: {
-                dataPoints: [{
-                  asDouble: 15,
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [
-                    { key: 'session.id', value: { stringValue: 'test-session-lines' } },
-                    { key: 'type', value: { stringValue: 'removed' } },
-                  ],
-                }],
-              },
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {
@@ -179,30 +205,36 @@ describe('Metrics Integration Tests', () => {
   describe('Git Metrics', () => {
     test('processes commit count metric', async () => {
       const metric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'claude-code-telemetry' },
+                metrics: [
+                  {
+                    name: 'claude_code.commit.count',
+                    description: 'Git commits',
+                    unit: 'commits',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asInt: '1',
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: 'test-session-git' } },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             ],
           },
-          scopeMetrics: [{
-            scope: { name: 'claude-code-telemetry' },
-            metrics: [{
-              name: 'claude_code.commit.count',
-              description: 'Git commits',
-              unit: 'commits',
-              sum: {
-                dataPoints: [{
-                  asInt: '1',
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [
-                    { key: 'session.id', value: { stringValue: 'test-session-git' } },
-                  ],
-                }],
-              },
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {
@@ -218,33 +250,39 @@ describe('Metrics Integration Tests', () => {
   describe('Tool Decision Metrics', () => {
     test('processes code edit tool decision metric', async () => {
       const metric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'claude-code-telemetry' },
+                metrics: [
+                  {
+                    name: 'claude_code.code_edit_tool.decision',
+                    description: 'Tool permission decisions',
+                    unit: 'decisions',
+                    gauge: {
+                      dataPoints: [
+                        {
+                          asInt: '1',
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: 'test-session-tool' } },
+                            { key: 'decision', value: { stringValue: 'accept' } },
+                            { key: 'tool', value: { stringValue: 'Write' } },
+                            { key: 'language', value: { stringValue: 'javascript' } },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             ],
           },
-          scopeMetrics: [{
-            scope: { name: 'claude-code-telemetry' },
-            metrics: [{
-              name: 'claude_code.code_edit_tool.decision',
-              description: 'Tool permission decisions',
-              unit: 'decisions',
-              gauge: {
-                dataPoints: [{
-                  asInt: '1',
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [
-                    { key: 'session.id', value: { stringValue: 'test-session-tool' } },
-                    { key: 'decision', value: { stringValue: 'accept' } },
-                    { key: 'tool', value: { stringValue: 'Write' } },
-                    { key: 'language', value: { stringValue: 'javascript' } },
-                  ],
-                }],
-              },
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {
@@ -260,30 +298,36 @@ describe('Metrics Integration Tests', () => {
   describe('Session Metrics', () => {
     test('processes session count metric', async () => {
       const metric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'claude-code-telemetry' },
+                metrics: [
+                  {
+                    name: 'claude_code.session.count',
+                    description: 'Session starts',
+                    unit: 'sessions',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asInt: '1',
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: 'test-session-start' } },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             ],
           },
-          scopeMetrics: [{
-            scope: { name: 'claude-code-telemetry' },
-            metrics: [{
-              name: 'claude_code.session.count',
-              description: 'Session starts',
-              unit: 'sessions',
-              sum: {
-                dataPoints: [{
-                  asInt: '1',
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [
-                    { key: 'session.id', value: { stringValue: 'test-session-start' } },
-                  ],
-                }],
-              },
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {
@@ -299,30 +343,36 @@ describe('Metrics Integration Tests', () => {
   describe('Active Time Metrics', () => {
     test('processes active time total metric', async () => {
       const metric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'claude-code-telemetry' },
+                metrics: [
+                  {
+                    name: 'claude_code.active_time.total',
+                    description: 'Active usage time',
+                    unit: 'seconds',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asDouble: 300.5,
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: 'test-session-time' } },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             ],
           },
-          scopeMetrics: [{
-            scope: { name: 'claude-code-telemetry' },
-            metrics: [{
-              name: 'claude_code.active_time.total',
-              description: 'Active usage time',
-              unit: 'seconds',
-              sum: {
-                dataPoints: [{
-                  asDouble: 300.5,
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [
-                    { key: 'session.id', value: { stringValue: 'test-session-time' } },
-                  ],
-                }],
-              },
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {
@@ -338,24 +388,32 @@ describe('Metrics Integration Tests', () => {
   describe('Error Handling', () => {
     test('handles metrics without session ID gracefully', async () => {
       const metric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [],
-          },
-          scopeMetrics: [{
-            scope: { name: 'claude-code-telemetry' },
-            metrics: [{
-              name: 'claude_code.cost.usage',
-              sum: {
-                dataPoints: [{
-                  asDouble: 0.1,
-                  timeUnixNano: Date.now() * 1000000,
-                  attributes: [], // No session ID
-                }],
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'claude-code-telemetry' },
+                metrics: [
+                  {
+                    name: 'claude_code.cost.usage',
+                    sum: {
+                      dataPoints: [
+                        {
+                          asDouble: 0.1,
+                          timeUnixNano: Date.now() * 1000000,
+                          attributes: [], // No session ID
+                        },
+                      ],
+                    },
+                  },
+                ],
               },
-            }],
-          }],
-        }],
+            ],
+          },
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {

@@ -48,17 +48,26 @@ function handleMetrics(data, res, sessions, langfuse) {
 
         for (const scopeMetric of resourceMetric.scopeMetrics || []) {
           for (const metric of scopeMetric.metrics || []) {
-            logger.info({
-              metricName: metric.name,
-              metricDescription: metric.description,
-              metricUnit: metric.unit,
-              dataPoints: metric.sum?.dataPoints?.length ||
-                         metric.gauge?.dataPoints?.length ||
-                         metric.histogram?.dataPoints?.length || 0,
-            }, 'Processing metric')
+            logger.info(
+              {
+                metricName: metric.name,
+                metricDescription: metric.description,
+                metricUnit: metric.unit,
+                dataPoints:
+                  metric.sum?.dataPoints?.length ||
+                  metric.gauge?.dataPoints?.length ||
+                  metric.histogram?.dataPoints?.length ||
+                  0,
+              },
+              'Processing metric',
+            )
 
             // Process metric data points
-            const dataPoints = metric.sum?.dataPoints || metric.gauge?.dataPoints || metric.histogram?.dataPoints || []
+            const dataPoints =
+              metric.sum?.dataPoints ||
+              metric.gauge?.dataPoints ||
+              metric.histogram?.dataPoints ||
+              []
 
             for (const dataPoint of dataPoints) {
               const attrs = extractAttributesArray(dataPoint.attributes)

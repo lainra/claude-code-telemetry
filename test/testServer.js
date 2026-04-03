@@ -67,7 +67,7 @@ async function startTestServer(testFile, customEnv = {}) {
       // Server not ready yet
     }
 
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
     attempts++
   }
 
@@ -95,7 +95,7 @@ async function stopTestServer(serverProcess) {
   }
 
   // Wait for process to exit
-  await new Promise(resolve => {
+  await new Promise((resolve) => {
     if (serverProcess.exitCode !== null) {
       resolve()
       return
@@ -114,7 +114,7 @@ async function stopTestServer(serverProcess) {
   })
 
   // Small delay to ensure port is released
-  await new Promise(resolve => setTimeout(resolve, 100))
+  await new Promise((resolve) => setTimeout(resolve, 100))
 }
 
 /**

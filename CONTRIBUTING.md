@@ -7,6 +7,7 @@ Thank you for your interest in contributing to Claude Code Telemetry! This docum
 This project maintains two distinct documentation files for different audiences:
 
 ### CLAUDE.md (User Documentation)
+
 - **Purpose**: Guide non-technical users through setup and usage
 - **Audience**: End users who want to track their Claude Code usage
 - **Content**: Step-by-step instructions, troubleshooting, visual guides
@@ -14,6 +15,7 @@ This project maintains two distinct documentation files for different audiences:
 - **Note**: This file is automatically read by Claude when users ask for help
 
 ### DEVELOPMENT.md (Developer Documentation)
+
 - **Purpose**: Technical guide for contributors and developers
 - **Audience**: Engineers working on or with the codebase
 - **Content**: Architecture, APIs, implementation details, debugging info
@@ -87,4 +89,3 @@ npm run format
 ## Code of Conduct
 
 Please be respectful and professional in all interactions. We aim to maintain a welcoming and inclusive community.
-

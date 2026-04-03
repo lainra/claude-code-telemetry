@@ -53,23 +53,25 @@ describeIntegration('OTLP Server Integration Tests', () => {
   describe('OTLP Endpoints', () => {
     test('POST /v1/logs accepts valid OTLP logs', async () => {
       const testLog = {
-        resourceLogs: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'test-service' } },
+        resourceLogs: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'test-service' } }],
+            },
+            scopeLogs: [
+              {
+                scope: { name: 'test-scope' },
+                logRecords: [
+                  {
+                    timeUnixNano: Date.now() * 1000000,
+                    body: { stringValue: 'test log message' },
+                    attributes: [{ key: 'test.attribute', value: { stringValue: 'test-value' } }],
+                  },
+                ],
+              },
             ],
           },
-          scopeLogs: [{
-            scope: { name: 'test-scope' },
-            logRecords: [{
-              timeUnixNano: Date.now() * 1000000,
-              body: { stringValue: 'test log message' },
-              attributes: [
-                { key: 'test.attribute', value: { stringValue: 'test-value' } },
-              ],
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/logs`, {
@@ -85,17 +87,19 @@ describeIntegration('OTLP Server Integration Tests', () => {
 
     test('POST /v1/metrics accepts valid OTLP metrics', async () => {
       const testMetric = {
-        resourceMetrics: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'test-service' } },
+        resourceMetrics: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'test-service' } }],
+            },
+            scopeMetrics: [
+              {
+                scope: { name: 'test-scope' },
+                metrics: [],
+              },
             ],
           },
-          scopeMetrics: [{
-            scope: { name: 'test-scope' },
-            metrics: [],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/metrics`, {
@@ -111,17 +115,19 @@ describeIntegration('OTLP Server Integration Tests', () => {
 
     test('POST /v1/traces accepts valid OTLP traces', async () => {
       const testTrace = {
-        resourceSpans: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'test-service' } },
+        resourceSpans: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'test-service' } }],
+            },
+            scopeSpans: [
+              {
+                scope: { name: 'test-scope' },
+                spans: [],
+              },
             ],
           },
-          scopeSpans: [{
-            scope: { name: 'test-scope' },
-            spans: [],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/traces`, {
@@ -140,27 +146,33 @@ describeIntegration('OTLP Server Integration Tests', () => {
     test('Processes user prompt event correctly', async () => {
       const sessionId = `test-session-${Date.now()}`
       const userPromptLog = {
-        resourceLogs: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
-              { key: 'service.version', value: { stringValue: '1.0.0' } },
+        resourceLogs: [
+          {
+            resource: {
+              attributes: [
+                { key: 'service.name', value: { stringValue: 'claude-code' } },
+                { key: 'service.version', value: { stringValue: '1.0.0' } },
+              ],
+            },
+            scopeLogs: [
+              {
+                scope: { name: 'com.anthropic.claude_code.events' },
+                logRecords: [
+                  {
+                    timeUnixNano: Date.now() * 1000000,
+                    body: { stringValue: 'claude_code.user_prompt' },
+                    attributes: [
+                      { key: 'session.id', value: { stringValue: sessionId } },
+                      { key: 'user.email', value: { stringValue: 'test@example.com' } },
+                      { key: 'prompt', value: { stringValue: 'Test prompt' } },
+                      { key: 'prompt_length', value: { stringValue: '11' } },
+                    ],
+                  },
+                ],
+              },
             ],
           },
-          scopeLogs: [{
-            scope: { name: 'com.anthropic.claude_code.events' },
-            logRecords: [{
-              timeUnixNano: Date.now() * 1000000,
-              body: { stringValue: 'claude_code.user_prompt' },
-              attributes: [
-                { key: 'session.id', value: { stringValue: sessionId } },
-                { key: 'user.email', value: { stringValue: 'test@example.com' } },
-                { key: 'prompt', value: { stringValue: 'Test prompt' } },
-                { key: 'prompt_length', value: { stringValue: '11' } },
-              ],
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/logs`, {
@@ -179,28 +191,32 @@ describeIntegration('OTLP Server Integration Tests', () => {
     test('Processes API request event correctly', async () => {
       const sessionId = `test-session-${Date.now()}`
       const apiRequestLog = {
-        resourceLogs: [{
-          resource: {
-            attributes: [
-              { key: 'service.name', value: { stringValue: 'claude-code' } },
+        resourceLogs: [
+          {
+            resource: {
+              attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+            },
+            scopeLogs: [
+              {
+                scope: { name: 'com.anthropic.claude_code.events' },
+                logRecords: [
+                  {
+                    timeUnixNano: Date.now() * 1000000,
+                    body: { stringValue: 'claude_code.api_request' },
+                    attributes: [
+                      { key: 'session.id', value: { stringValue: sessionId } },
+                      { key: 'model', value: { stringValue: 'claude-3-5-sonnet-20241022' } },
+                      { key: 'input_tokens', value: { stringValue: '100' } },
+                      { key: 'output_tokens', value: { stringValue: '200' } },
+                      { key: 'cost_usd', value: { stringValue: '0.0015' } },
+                      { key: 'duration_ms', value: { stringValue: '1500' } },
+                    ],
+                  },
+                ],
+              },
             ],
           },
-          scopeLogs: [{
-            scope: { name: 'com.anthropic.claude_code.events' },
-            logRecords: [{
-              timeUnixNano: Date.now() * 1000000,
-              body: { stringValue: 'claude_code.api_request' },
-              attributes: [
-                { key: 'session.id', value: { stringValue: sessionId } },
-                { key: 'model', value: { stringValue: 'claude-3-5-sonnet-20241022' } },
-                { key: 'input_tokens', value: { stringValue: '100' } },
-                { key: 'output_tokens', value: { stringValue: '200' } },
-                { key: 'cost_usd', value: { stringValue: '0.0015' } },
-                { key: 'duration_ms', value: { stringValue: '1500' } },
-              ],
-            }],
-          }],
-        }],
+        ],
       }
 
       const response = await fetch(`${baseUrl}/v1/logs`, {
@@ -254,24 +270,28 @@ describeIntegration('OTLP Server Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          resourceLogs: [{
-            resource: {
-              attributes: [
-                { key: 'service.name', value: { stringValue: 'claude-code' } },
+          resourceLogs: [
+            {
+              resource: {
+                attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+              },
+              scopeLogs: [
+                {
+                  scope: { name: 'com.anthropic.claude_code.events' },
+                  logRecords: [
+                    {
+                      timeUnixNano: Date.now() * 1000000,
+                      body: { stringValue: 'claude_code.user_prompt' },
+                      attributes: [
+                        { key: 'session.id', value: { stringValue: sessionId } },
+                        { key: 'prompt', value: { stringValue: 'Integration test prompt' } },
+                      ],
+                    },
+                  ],
+                },
               ],
             },
-            scopeLogs: [{
-              scope: { name: 'com.anthropic.claude_code.events' },
-              logRecords: [{
-                timeUnixNano: Date.now() * 1000000,
-                body: { stringValue: 'claude_code.user_prompt' },
-                attributes: [
-                  { key: 'session.id', value: { stringValue: sessionId } },
-                  { key: 'prompt', value: { stringValue: 'Integration test prompt' } },
-                ],
-              }],
-            }],
-          }],
+          ],
         }),
       })
 
@@ -280,28 +300,32 @@ describeIntegration('OTLP Server Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          resourceLogs: [{
-            resource: {
-              attributes: [
-                { key: 'service.name', value: { stringValue: 'claude-code' } },
+          resourceLogs: [
+            {
+              resource: {
+                attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+              },
+              scopeLogs: [
+                {
+                  scope: { name: 'com.anthropic.claude_code.events' },
+                  logRecords: [
+                    {
+                      timeUnixNano: Date.now() * 1000000 + 1000000,
+                      body: { stringValue: 'claude_code.api_request' },
+                      attributes: [
+                        { key: 'session.id', value: { stringValue: sessionId } },
+                        { key: 'model', value: { stringValue: 'claude-3-5-sonnet-20241022' } },
+                        { key: 'input_tokens', value: { stringValue: '150' } },
+                        { key: 'output_tokens', value: { stringValue: '300' } },
+                        { key: 'cost_usd', value: { stringValue: '0.00225' } },
+                        { key: 'duration_ms', value: { stringValue: '2000' } },
+                      ],
+                    },
+                  ],
+                },
               ],
             },
-            scopeLogs: [{
-              scope: { name: 'com.anthropic.claude_code.events' },
-              logRecords: [{
-                timeUnixNano: Date.now() * 1000000 + 1000000,
-                body: { stringValue: 'claude_code.api_request' },
-                attributes: [
-                  { key: 'session.id', value: { stringValue: sessionId } },
-                  { key: 'model', value: { stringValue: 'claude-3-5-sonnet-20241022' } },
-                  { key: 'input_tokens', value: { stringValue: '150' } },
-                  { key: 'output_tokens', value: { stringValue: '300' } },
-                  { key: 'cost_usd', value: { stringValue: '0.00225' } },
-                  { key: 'duration_ms', value: { stringValue: '2000' } },
-                ],
-              }],
-            }],
-          }],
+          ],
         }),
       })
 
@@ -312,32 +336,36 @@ describeIntegration('OTLP Server Integration Tests', () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              resourceLogs: [{
-                resource: {
-                  attributes: [
-                    { key: 'service.name', value: { stringValue: 'claude-code' } },
+              resourceLogs: [
+                {
+                  resource: {
+                    attributes: [{ key: 'service.name', value: { stringValue: 'claude-code' } }],
+                  },
+                  scopeLogs: [
+                    {
+                      scope: { name: 'com.anthropic.claude_code.events' },
+                      logRecords: [
+                        {
+                          timeUnixNano: Date.now() * 1000000 + 2000000,
+                          body: { stringValue: 'claude_code.tool_result' },
+                          attributes: [
+                            { key: 'session.id', value: { stringValue: sessionId } },
+                            { key: 'tool_name', value: { stringValue: 'Write' } },
+                            { key: 'success', value: { stringValue: 'true' } },
+                            { key: 'duration_ms', value: { stringValue: '50' } },
+                          ],
+                        },
+                      ],
+                    },
                   ],
                 },
-                scopeLogs: [{
-                  scope: { name: 'com.anthropic.claude_code.events' },
-                  logRecords: [{
-                    timeUnixNano: Date.now() * 1000000 + 2000000,
-                    body: { stringValue: 'claude_code.tool_result' },
-                    attributes: [
-                      { key: 'session.id', value: { stringValue: sessionId } },
-                      { key: 'tool_name', value: { stringValue: 'Write' } },
-                      { key: 'success', value: { stringValue: 'true' } },
-                      { key: 'duration_ms', value: { stringValue: '50' } },
-                    ],
-                  }],
-                }],
-              }],
+              ],
             }),
           })
           break // Success, exit retry loop
         } catch (error) {
           if (retry === 2) throw error // Last retry, re-throw
-          await new Promise(resolve => setTimeout(resolve, 100)) // Wait before retry
+          await new Promise((resolve) => setTimeout(resolve, 100)) // Wait before retry
         }
       }
 

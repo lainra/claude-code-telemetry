@@ -1,11 +1,6 @@
 {
   "event_type": "claude_code.user_prompt",
-  "required_attributes": [
-    "session.id",
-    "user.email",
-    "prompt",
-    "prompt_length"
-  ],
+  "required_attributes": ["session.id", "user.email", "prompt", "prompt_length"],
   "validation": {
     "session.id": {
       "type": "string",

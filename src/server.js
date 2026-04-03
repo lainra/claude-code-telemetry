@@ -42,16 +42,17 @@ const config = createConfig()
 // Logger setup
 const logger = pino({
   level: config.logLevel,
-  transport: config.nodeEnv === 'development'
-    ? {
-        target: 'pino-pretty',
-        options: {
-          translateTime: 'HH:MM:ss.l',
-          ignore: 'pid,hostname',
-          colorize: true,
-        },
-      }
-    : undefined,
+  transport:
+    config.nodeEnv === 'development'
+      ? {
+          target: 'pino-pretty',
+          options: {
+            translateTime: 'HH:MM:ss.l',
+            ignore: 'pid,hostname',
+            colorize: true,
+          },
+        }
+      : undefined,
 })
 
 // Validate configuration

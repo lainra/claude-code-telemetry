@@ -62,14 +62,14 @@ describe('End-to-End Integration', () => {
       let stdout = ''
       let stderr = ''
 
-      child.stdout.on('data', data => {
+      child.stdout.on('data', (data) => {
         stdout += data
       })
-      child.stderr.on('data', data => {
+      child.stderr.on('data', (data) => {
         stderr += data
       })
 
-      child.on('close', code => {
+      child.on('close', (code) => {
         if (code === 0) {
           resolve({ stdout, stderr })
         } else {
@@ -127,12 +127,15 @@ describe('End-to-End Integration', () => {
     expect(output).toContain('4')
 
     // Wait for telemetry to be processed
-    await new Promise(resolve => setTimeout(resolve, 3000))
+    await new Promise((resolve) => setTimeout(resolve, 3000))
 
     // Verify conversation trace was created
-    const trace = await langfuseClient.waitForTrace({
-      name: 'conversation-',
-    }, { timeout: 10000 })
+    const trace = await langfuseClient.waitForTrace(
+      {
+        name: 'conversation-',
+      },
+      { timeout: 10000 },
+    )
 
     expect(trace).toBeDefined()
     expect(trace.input).toMatchObject({
@@ -144,11 +147,13 @@ describe('End-to-End Integration', () => {
     const fullTrace = await langfuseClient.getTrace(trace.id)
 
     // Should have at least one generation (possibly two with routing)
-    const generations = fullTrace.observations?.filter(o => o.type === 'GENERATION') || []
+    const generations = fullTrace.observations?.filter((o) => o.type === 'GENERATION') || []
     expect(generations.length).toBeGreaterThanOrEqual(1)
 
     // Verify model and token usage
-    const mainGeneration = generations.find(g => g.model?.includes('opus') || g.model?.includes('sonnet'))
+    const mainGeneration = generations.find(
+      (g) => g.model?.includes('opus') || g.model?.includes('sonnet'),
+    )
     expect(mainGeneration).toBeDefined()
     expect(mainGeneration.usage?.total).toBeGreaterThan(0)
   })
@@ -169,13 +174,12 @@ describe('End-to-End Integration', () => {
       })
 
       // Wait for processing
-      await new Promise(resolve => setTimeout(resolve, 5000))
+      await new Promise((resolve) => setTimeout(resolve, 5000))
 
       // Find the conversation trace
       const traces = await langfuseClient.getTraces(20)
-      const trace = traces.find(t =>
-        t.name?.startsWith('conversation-') &&
-        t.input?.prompt?.includes('hello.py'),
+      const trace = traces.find(
+        (t) => t.name?.startsWith('conversation-') && t.input?.prompt?.includes('hello.py'),
       )
 
       expect(trace).toBeDefined()
@@ -184,13 +188,13 @@ describe('End-to-End Integration', () => {
       const fullTrace = await langfuseClient.getTrace(trace.id)
 
       // Should have tool usage events (Write tool)
-      const events = fullTrace.observations?.filter(o => o.type === 'EVENT') || []
-      const toolEvents = events.filter(e => e.name?.includes('tool-'))
+      const events = fullTrace.observations?.filter((o) => o.type === 'EVENT') || []
+      const toolEvents = events.filter((e) => e.name?.includes('tool-'))
 
       expect(toolEvents.length).toBeGreaterThan(0)
 
       // Should have a Write tool event
-      const writeEvent = toolEvents.find(e => e.name?.includes('Write'))
+      const writeEvent = toolEvents.find((e) => e.name?.includes('Write'))
       expect(writeEvent).toBeDefined()
 
       // Verify file was created
@@ -210,11 +214,11 @@ describe('End-to-End Integration', () => {
     await runClaude(prompt)
 
     // Wait for session to complete and summary to be created
-    await new Promise(resolve => setTimeout(resolve, 8000))
+    await new Promise((resolve) => setTimeout(resolve, 8000))
 
     // Look for session summary trace
     const traces = await langfuseClient.getTraces(20)
-    const summaryTrace = traces.find(t => t.name === 'session-summary')
+    const summaryTrace = traces.find((t) => t.name === 'session-summary')
 
     // Note: Summary trace is created on session finalization
     // In real usage, this happens when the server shuts down or after timeout
@@ -230,7 +234,7 @@ describe('End-to-End Integration', () => {
       const scores = fullTrace.scores || []
 
       expect(scores.length).toBeGreaterThan(0)
-      const qualityScore = scores.find(s => s.name === 'quality')
+      const qualityScore = scores.find((s) => s.name === 'quality')
       expect(qualityScore).toBeDefined()
     }
   })
@@ -242,13 +246,12 @@ describe('End-to-End Integration', () => {
     await runClaude('What is the meaning of life?')
 
     // Wait for processing
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise((resolve) => setTimeout(resolve, 5000))
 
     // Get recent traces
     const traces = await langfuseClient.getTraces(10)
-    const conversationTrace = traces.find(t =>
-      t.name?.startsWith('conversation-') &&
-      t.input?.prompt?.includes('meaning of life'),
+    const conversationTrace = traces.find(
+      (t) => t.name?.startsWith('conversation-') && t.input?.prompt?.includes('meaning of life'),
     )
 
     expect(conversationTrace).toBeDefined()
@@ -264,8 +267,8 @@ describe('End-to-End Integration', () => {
     const fullTrace = await langfuseClient.getTrace(conversationTrace.id)
 
     // Check for cost tracking in generation metadata
-    const generation = fullTrace.observations?.find(o =>
-      o.type === 'GENERATION' && o.metadata?.cost,
+    const generation = fullTrace.observations?.find(
+      (o) => o.type === 'GENERATION' && o.metadata?.cost,
     )
 
     if (generation) {

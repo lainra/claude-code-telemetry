@@ -63,12 +63,15 @@ function processCostMetric(dataPoint, attrs, timestamp, session) {
   const model = attrs.model || 'unknown'
 
   // Cost is now handled by session.processMetric()
-  logger.info({
-    sessionId: session.sessionId,
-    cost,
-    model,
-    totalCost: session.totalCost,
-  }, 'Cost metric processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      cost,
+      model,
+      totalCost: session.totalCost,
+    },
+    'Cost metric processed',
+  )
 
   return {
     type: 'cost',
@@ -87,12 +90,15 @@ function processTokenMetric(dataPoint, attrs, timestamp, session) {
   const model = attrs.model || 'unknown'
 
   // Tokens are now handled by session.processMetric()
-  logger.info({
-    sessionId: session.sessionId,
-    tokens,
-    tokenType,
-    model,
-  }, 'Token metric processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      tokens,
+      tokenType,
+      model,
+    },
+    'Token metric processed',
+  )
 
   return {
     type: 'token',
@@ -111,13 +117,16 @@ function processLinesOfCodeMetric(dataPoint, attrs, timestamp, session) {
   const changeType = attrs.type || 'unknown'
 
   // Lines tracking is now handled by session.processMetric()
-  logger.info({
-    sessionId: session.sessionId,
-    lines,
-    changeType,
-    totalAdded: session.linesAdded,
-    totalRemoved: session.linesRemoved,
-  }, 'Lines of code metric processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      lines,
+      changeType,
+      totalAdded: session.linesAdded,
+      totalRemoved: session.linesRemoved,
+    },
+    'Lines of code metric processed',
+  )
 
   return {
     type: 'lines_of_code',
@@ -139,11 +148,14 @@ function processCommitMetric(dataPoint, attrs, timestamp, session) {
   }
   session.commitCount += commits
 
-  logger.info({
-    sessionId: session.sessionId,
-    commits,
-    totalCommits: session.commitCount,
-  }, 'Commit metric processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      commits,
+      totalCommits: session.commitCount,
+    },
+    'Commit metric processed',
+  )
 
   return {
     type: 'commit',
@@ -202,13 +214,16 @@ function processToolDecisionMetric(dataPoint, attrs, timestamp, session) {
     })
   }
 
-  logger.info({
-    sessionId: session.sessionId,
-    decision,
-    tool,
-    language,
-    count,
-  }, 'Tool decision metric processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      decision,
+      tool,
+      language,
+      count,
+    },
+    'Tool decision metric processed',
+  )
 
   return {
     type: 'tool_decision',
@@ -227,10 +242,13 @@ function processSessionMetric(dataPoint, attrs, timestamp, session) {
   // This metric indicates a new session started
   session.sessionStarted = true
 
-  logger.info({
-    sessionId: session.sessionId,
-    timestamp: new Date(timestamp).toISOString(),
-  }, 'Session start metric processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      timestamp: new Date(timestamp).toISOString(),
+    },
+    'Session start metric processed',
+  )
 
   return {
     type: 'session_start',
@@ -246,10 +264,13 @@ function processActiveTimeMetric(dataPoint, attrs, timestamp, session) {
 
   session.activeTime = activeTime
 
-  logger.info({
-    sessionId: session.sessionId,
-    activeTime,
-  }, 'Active time metric processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      activeTime,
+    },
+    'Active time metric processed',
+  )
 
   return {
     type: 'active_time',
@@ -266,11 +287,14 @@ function processPullRequestMetric(dataPoint, attrs, timestamp, session) {
 
   session.prCount = (session.prCount || 0) + prCount
 
-  logger.info({
-    sessionId: session.sessionId,
-    prCount,
-    totalPRs: session.prCount,
-  }, 'Pull request metric processed')
+  logger.info(
+    {
+      sessionId: session.sessionId,
+      prCount,
+      totalPRs: session.prCount,
+    },
+    'Pull request metric processed',
+  )
 
   return {
     type: 'pull_request',

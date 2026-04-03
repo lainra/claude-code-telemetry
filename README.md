@@ -17,7 +17,6 @@
 
 https://github.com/user-attachments/assets/2634cec3-94af-4a2d-90da-44cd641f1746
 
-
 ## 🎯 What This Actually Does
 
 Claude Code Telemetry is a lightweight bridge that captures telemetry data from Claude Code and forwards it to Langfuse for visualization. You get:
@@ -31,14 +30,17 @@ Claude Code Telemetry is a lightweight bridge that captures telemetry data from 
 The original motivation from the author was that when using Claude Code Pro/Max, it didn't have good options for telemetry out of the box compared to API-based requests that can be integrated with various solutions and wanted to provide a secure turnkey local setup for people using Claude Code to benefit from.
 
 ### 🏗️ Built on Standards
+
 Uses **OpenTelemetry** for data collection, **Langfuse** for visualization, and **Claude's native observability** APIs. No proprietary formats, no vendor lock-in.
 
 ## 🚀 Quick Start (30 seconds)
 
 ### Prerequisites
+
 🐳 **Docker Desktop** - [Install here](https://docker.com/products/docker-desktop) if you don't see the whale icon in your menu bar
 
 ### Setup
+
 ```bash
 # Clone and enter directory
 git clone https://github.com/lainra/claude-code-telemetry && cd claude-code-telemetry
@@ -56,7 +58,9 @@ claude "What is 2+2?"
 **That's it!** View your dashboard at http://localhost:3000
 
 ### Need Help?
+
 Let Claude guide you through the setup:
+
 ```bash
 claude "Set up the telemetry dashboard"
 ```
@@ -64,7 +68,9 @@ claude "Set up the telemetry dashboard"
 ## 📸 What You'll See in Langfuse
 
 ### Session View
+
 Every conversation becomes a trackable session:
+
 ```
 Session: 4:32 PM - 5:15 PM (43 minutes)
 ├── Total Cost: $18.43
@@ -79,7 +85,9 @@ Session: 4:32 PM - 5:15 PM (43 minutes)
 ```
 
 ### Individual API Calls
+
 Full details for every Claude interaction:
+
 ```
 4:45 PM - claude-3-opus-20240229
 ├── Input: 12,453 tokens (8,234 from cache)
@@ -90,7 +98,9 @@ Full details for every Claude interaction:
 ```
 
 ### Cost Breakdown
+
 Track spending by model and user:
+
 ```
 Today's Usage:
 ├── Total: $67.43
@@ -113,6 +123,7 @@ Claude Code → OpenTelemetry → Telemetry Bridge → Langfuse
 ```
 
 The bridge:
+
 1. Listens for OpenTelemetry data from Claude Code
 2. Enriches it with session context
 3. Forwards to Langfuse for visualization
@@ -121,6 +132,7 @@ The bridge:
 ## 🌟 What This Tool Is (and Isn't)
 
 ### ✅ What It Does:
+
 - **Tracks costs** - Know exactly what you're spending
 - **Shows usage patterns** - See when and how Claude is used
 - **Groups work sessions** - Understand complete tasks, not just individual calls
@@ -128,6 +140,7 @@ The bridge:
 - **Runs locally** - Your data stays on your infrastructure
 
 ### ❌ What It Doesn't Do:
+
 - **Measure productivity** - Can't tell if you're working faster
 - **Analyze code quality** - Doesn't evaluate AI-generated code
 - **Provide strategic insights** - Just shows raw data, not recommendations
@@ -137,13 +150,17 @@ The bridge:
 ## 🛠️ Installation Options
 
 ### Option 1: Full Stack (Recommended)
+
 Includes Langfuse dashboard + telemetry bridge:
+
 ```bash
 ./quickstart.sh
 ```
 
 ### Option 2: Bridge Only (Manual w/NPM)
+
 Already have Langfuse? Just run the bridge:
+
 ```bash
 # Configure your existing Langfuse credentials
 export LANGFUSE_PUBLIC_KEY=your-public-key
@@ -156,7 +173,9 @@ npm start
 ```
 
 ### Option 3: Bridge Only (Docker)
+
 Already have Langfuse? Run the bridge in Docker:
+
 ```bash
 # Create .env file with your Langfuse credentials
 cp .env.example .env
@@ -174,12 +193,12 @@ docker compose up telemetry-bridge
 
 ## 🎛️ Configuration
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `SESSION_TIMEOUT` | 1 hour | Groups related work into sessions |
-| `OTLP_RECEIVER_PORT` | 4318 | OpenTelemetry standard port |
-| `LANGFUSE_HOST` | http://localhost:3000 | Langfuse dashboard URL |
-| `LOG_LEVEL` | info | Logging verbosity |
+| Setting              | Default               | Description                       |
+| -------------------- | --------------------- | --------------------------------- |
+| `SESSION_TIMEOUT`    | 1 hour                | Groups related work into sessions |
+| `OTLP_RECEIVER_PORT` | 4318                  | OpenTelemetry standard port       |
+| `LANGFUSE_HOST`      | http://localhost:3000 | Langfuse dashboard URL            |
+| `LOG_LEVEL`          | info                  | Logging verbosity                 |
 
 See `.env.example` for all options.
 
@@ -198,8 +217,9 @@ See `.env.example` for all options.
 ## 🤔 Should You Use This?
 
 **Use this if you want to:**
+
 - Track Claude Code costs across your team
-- Understand usage patterns and peak times  
+- Understand usage patterns and peak times
 - Have transparency into AI tool spending
 - Keep telemetry data on your own infrastructure
 

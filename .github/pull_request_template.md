@@ -25,10 +25,11 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 - [ ] Linting passes (`npm run lint`)
 
 **Test Configuration**:
-* Node.js version:
-* OS:
-* Claude Code version:
-* Langfuse version (if applicable):
+
+- Node.js version:
+- OS:
+- Claude Code version:
+- Langfuse version (if applicable):
 
 ## Checklist:
 

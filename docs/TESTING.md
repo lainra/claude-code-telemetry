@@ -5,6 +5,7 @@ This comprehensive guide covers all aspects of testing the Claude Code Telemetry
 ## Overview
 
 The project uses Jest for all testing with three levels:
+
 1. **Unit Tests** - Test individual modules without external dependencies
 2. **Integration Tests** - Test with real server and API interactions
 3. **End-to-End Tests** - Test with real Claude binary (requires credentials)
@@ -12,17 +13,19 @@ The project uses Jest for all testing with three levels:
 ## Test Structure
 
 ### Unit Tests (`test/unit/`)
+
 - **Purpose**: Test pure functions and logic in isolation
 - **No Server Required**: Run without external dependencies
 - **Fast Execution**: Complete in < 1 second
-- **Files**: 
+- **Files**:
   - `eventProcessor.test.js` - Event handling logic
   - `metricsProcessor.test.js` - Metrics processing
   - `sessionHandler.test.js` - Session management (831 lines, most comprehensive)
   - `serverHelpers.test.js` - Helper functions
   - `requestHandlers.test.js` - Request processing
 
-### Integration Tests 
+### Integration Tests
+
 - **Purpose**: Test with real server and Langfuse API
 - **Auto-starts Server**: Test suite manages server lifecycle
 - **Real HTTP Requests**: Uses fetch() to test actual endpoints
@@ -34,6 +37,7 @@ The project uses Jest for all testing with three levels:
   - `test/integration/e2e.integration.test.js` - Full E2E with Claude
 
 ### Test Helpers
+
 - `testServer.js` - Manages server lifecycle for tests
 - `helpers/langfuse-client.js` - Direct Langfuse API access
 - `helpers/otlp-test-data.js` - Consistent test fixtures
@@ -41,6 +45,7 @@ The project uses Jest for all testing with three levels:
 ## Running Tests
 
 ### All Tests
+
 ```bash
 # Run all tests
 npm test
@@ -50,6 +55,7 @@ npm run test:coverage
 ```
 
 ### Specific Test Types
+
 ```bash
 # Unit tests only (fast, no dependencies)
 npm run test:unit
@@ -62,6 +68,7 @@ npm run test:ci
 ```
 
 ### Manual Testing with Real Claude
+
 ```bash
 # 1. Start the server
 npm start
@@ -81,6 +88,7 @@ claude "What is 2+2?"
 ## Test Coverage
 
 Current coverage: **95.44%**
+
 - Statements: 95.43%
 - Branches: 77.13%
 - Functions: 92.45%
@@ -109,6 +117,7 @@ Current coverage: **95.44%**
 ## Writing New Tests
 
 ### Unit Test Template
+
 ```javascript
 // Create in test/unit/myModule.test.js
 jest.mock('langfuse') // Mock external dependencies
@@ -124,28 +133,29 @@ describe('My Module', () => {
 ```
 
 ### Integration Test Template
+
 ```javascript
 // Create new file or add to existing integration test
 const { startTestServer, stopTestServer } = require('./testServer')
 
 describe('My Integration Test', () => {
   let serverProcess, baseUrl
-  
+
   beforeAll(async () => {
     const result = await startTestServer('my.test.js')
     serverProcess = result.serverProcess
     baseUrl = result.baseUrl
   }, 15000)
-  
+
   afterAll(async () => {
     await stopTestServer(serverProcess)
   })
-  
+
   test('should handle requests', async () => {
     const response = await fetch(`${baseUrl}/v1/logs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(testData)
+      body: JSON.stringify(testData),
     })
     expect(response.status).toBe(200)
   })
@@ -165,6 +175,7 @@ describe('My Integration Test', () => {
 ## Troubleshooting
 
 ### Integration Tests Fail
+
 ```bash
 # Kill any lingering processes
 lsof -ti:4318 | xargs kill -9 2>/dev/null
@@ -175,20 +186,24 @@ echo $LANGFUSE_SECRET_KEY
 ```
 
 ### "Jest did not exit" Warning
+
 - Normal for integration tests
 - Tests use `--forceExit` flag
 - Caused by Langfuse SDK intervals
 
 ### E2E Tests Skipped
+
 - Requires Claude binary in PATH
 - Requires Langfuse credentials
 - Set `CI=false` to enable in CI
 
 ### Tests Hang After Completion
+
 - Async operations not properly cleaned up
 - Ensure all intervals/timeouts are cleared in afterAll hooks
 
 ### Debug Mode
+
 ```bash
 # For tests
 LOG_LEVEL=debug npm test
@@ -200,6 +215,7 @@ LOG_LEVEL=debug npm start
 ## CI/CD Integration
 
 ### GitHub Actions Example
+
 ```yaml
 name: Telemetry Tests
 on: [push, pull_request]
@@ -209,21 +225,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run tests with coverage
         run: npm run test:coverage
         env:
           LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
           LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
-      
+
       - name: Upload coverage reports
         uses: actions/upload-artifact@v3
         if: always()

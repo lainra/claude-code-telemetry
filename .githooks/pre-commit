@@ -1,0 +1,24 @@
+#!/bin/sh
+# Pre-commit quality gate — fast local checks only; tests run in CI
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "==> lint"
+npm run lint --silent
+
+echo "==> format:check"
+npm run format:check --silent
+
+echo "==> secret scan (staged files)"
+STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -v '^node_modules/' | grep -v '^\.git/' || true)
+if [ -n "$STAGED" ]; then
+  if echo "$STAGED" | xargs git show HEAD: 2>/dev/null | \
+    grep -qE '(api[_-]?key|api[_-]?secret|auth[_-]?token|private[_-]?key|secret[_-]?key)\s*[:=]\s*[A-Za-z0-9+/]{20,}'; then
+    echo "ERROR: potential secret detected in staged files — commit blocked"
+    exit 1
+  fi
+fi
+
+echo "==> pre-commit passed"

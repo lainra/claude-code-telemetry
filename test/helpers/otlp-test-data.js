@@ -147,18 +147,20 @@ function createCostMetric(sessionId, model = 'claude-3-opus-20240229', cost = 0.
     sum: {
       aggregationTemporality: 1,
       isMonotonic: true,
-      dataPoints: [{
-        attributes: [
-          ...Object.entries(attrs).map(([k, v]) => ({
-            key: k,
-            value: { stringValue: String(v) },
-          })),
-          { key: 'model', value: { stringValue: model } },
-        ],
-        startTimeUnixNano: String(timestamp - 1000000),
-        timeUnixNano: String(timestamp),
-        asDouble: cost,
-      }],
+      dataPoints: [
+        {
+          attributes: [
+            ...Object.entries(attrs).map(([k, v]) => ({
+              key: k,
+              value: { stringValue: String(v) },
+            })),
+            { key: 'model', value: { stringValue: model } },
+          ],
+          startTimeUnixNano: String(timestamp - 1000000),
+          timeUnixNano: String(timestamp),
+          asDouble: cost,
+        },
+      ],
     },
   }
 }
@@ -167,12 +169,7 @@ function createCostMetric(sessionId, model = 'claude-3-opus-20240229', cost = 0.
  * Create token usage metric data points
  */
 function createTokenMetrics(sessionId, model = 'claude-3-opus-20240229', tokens = {}) {
-  const {
-    input = 100,
-    output = 200,
-    cacheRead = 50,
-    cacheCreation = 25,
-  } = tokens
+  const { input = 100, output = 200, cacheRead = 50, cacheCreation = 25 } = tokens
 
   const attrs = createStandardAttributes(sessionId)
   const timestamp = Date.now() * 1000000
@@ -213,18 +210,22 @@ function createTokenMetrics(sessionId, model = 'claude-3-opus-20240229', tokens 
  */
 function createOTLPLogsRequest(logRecords) {
   return {
-    resourceLogs: [{
-      resource: {
-        attributes: createResourceAttributes(),
-      },
-      scopeLogs: [{
-        scope: {
-          name: 'com.anthropic.claude_code',
-          version: '1.0.64',
+    resourceLogs: [
+      {
+        resource: {
+          attributes: createResourceAttributes(),
         },
-        logRecords,
-      }],
-    }],
+        scopeLogs: [
+          {
+            scope: {
+              name: 'com.anthropic.claude_code',
+              version: '1.0.64',
+            },
+            logRecords,
+          },
+        ],
+      },
+    ],
   }
 }
 
@@ -233,18 +234,22 @@ function createOTLPLogsRequest(logRecords) {
  */
 function createOTLPMetricsRequest(metrics) {
   return {
-    resourceMetrics: [{
-      resource: {
-        attributes: createResourceAttributes(),
-      },
-      scopeMetrics: [{
-        scope: {
-          name: 'com.anthropic.claude_code',
-          version: '1.0.64',
+    resourceMetrics: [
+      {
+        resource: {
+          attributes: createResourceAttributes(),
         },
-        metrics,
-      }],
-    }],
+        scopeMetrics: [
+          {
+            scope: {
+              name: 'com.anthropic.claude_code',
+              version: '1.0.64',
+            },
+            metrics,
+          },
+        ],
+      },
+    ],
   }
 }
 

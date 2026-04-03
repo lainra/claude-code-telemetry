@@ -41,7 +41,7 @@ class LangfuseTestClient {
 
       const req = client.request(options, (res) => {
         let data = ''
-        res.on('data', chunk => {
+        res.on('data', (chunk) => {
           data += chunk
         })
         res.on('end', () => {
@@ -120,14 +120,16 @@ class LangfuseTestClient {
     while (Date.now() - startTime < timeout) {
       const traces = await this.getTraces(20)
 
-      const found = traces.find(trace => {
+      const found = traces.find((trace) => {
         if (criteria.name && !trace.name?.includes(criteria.name)) return false
         if (criteria.sessionId && trace.sessionId !== criteria.sessionId) return false
         if (criteria.hasObservations) {
           // Need to fetch full trace to check observations
-          return this.getTrace(trace.id).then(fullTrace => {
-            return (fullTrace.observations?.length || 0) > 0
-          }).catch(() => false)
+          return this.getTrace(trace.id)
+            .then((fullTrace) => {
+              return (fullTrace.observations?.length || 0) > 0
+            })
+            .catch(() => false)
         }
         return true
       })
@@ -140,7 +142,7 @@ class LangfuseTestClient {
         return found
       }
 
-      await new Promise(resolve => setTimeout(resolve, interval))
+      await new Promise((resolve) => setTimeout(resolve, interval))
     }
 
     throw new Error(`Trace not found after ${timeout}ms with criteria: ${JSON.stringify(criteria)}`)
@@ -177,13 +179,13 @@ class LangfuseTestClient {
 
     // Check session exists
     const sessions = await this.getSessions()
-    validation.session = sessions.some(s => s.id === sessionId)
+    validation.session = sessions.some((s) => s.id === sessionId)
 
     // Get traces for session
     const traces = await this.getTraces(20, sessionId)
 
     // Check for conversation trace
-    const conversationTrace = traces.find(t => t.name?.startsWith('conversation-'))
+    const conversationTrace = traces.find((t) => t.name?.startsWith('conversation-'))
     if (conversationTrace) {
       validation.conversationTrace = true
 
@@ -198,11 +200,11 @@ class LangfuseTestClient {
 
       // Count observations
       const observations = fullTrace.observations || []
-      validation.generations = observations.filter(o => o.type === 'GENERATION').length
-      validation.events = observations.filter(o => o.type === 'EVENT').length
+      validation.generations = observations.filter((o) => o.type === 'GENERATION').length
+      validation.events = observations.filter((o) => o.type === 'EVENT').length
 
       // Check for cache data in generations
-      const generation = observations.find(o => o.type === 'GENERATION')
+      const generation = observations.find((o) => o.type === 'GENERATION')
       if (generation?.metadata?.cache) {
         validation.metadata.cache = true
       }
@@ -212,7 +214,7 @@ class LangfuseTestClient {
     }
 
     // Check for session summary trace
-    validation.summaryTrace = traces.some(t => t.name === 'session-summary')
+    validation.summaryTrace = traces.some((t) => t.name === 'session-summary')
 
     return validation
   }

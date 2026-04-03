@@ -133,9 +133,7 @@ describe('Server Helpers', () => {
         finalize: jest.fn().mockRejectedValue(new Error('Finalize failed')),
       }
 
-      const sessions = new Map([
-        ['session-1', mockSession],
-      ])
+      const sessions = new Map([['session-1', mockSession]])
 
       const cleaned = await cleanupSessions(sessions, 300000)
 
@@ -169,9 +167,7 @@ describe('Server Helpers', () => {
         finalize: jest.fn().mockRejectedValue(new Error('Finalize failed')),
       }
 
-      const sessions = new Map([
-        ['session-1', mockSession],
-      ])
+      const sessions = new Map([['session-1', mockSession]])
 
       await finalizeAllSessions(sessions)
 
@@ -251,8 +247,14 @@ describe('Server Helpers', () => {
       setCorsHeaders(res)
 
       expect(res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Origin', '*')
-      expect(res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-      expect(res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+      expect(res.setHeader).toHaveBeenCalledWith(
+        'Access-Control-Allow-Methods',
+        'POST, GET, OPTIONS',
+      )
+      expect(res.setHeader).toHaveBeenCalledWith(
+        'Access-Control-Allow-Headers',
+        'Content-Type, Authorization',
+      )
     })
   })
 
