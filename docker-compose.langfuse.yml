@@ -12,8 +12,8 @@ services:
     depends_on:
       langfuse-web:
         condition: service_started
-    ports:
-      - "4318:4318"
+    ports: !override
+      - "127.0.0.1:4318:4318"
     environment:
       # Use the auto-created Langfuse API keys
       LANGFUSE_PUBLIC_KEY: ${LANGFUSE_INIT_PROJECT_PUBLIC_KEY:-pk-lf-1234567890}
@@ -32,3 +32,13 @@ services:
       retries: 3
       start_period: 5s
     restart: unless-stopped
+
+  # Publish upstream services on localhost only
+  langfuse-web:
+    ports: !override
+      - "127.0.0.1:3000:3000"
+
+  minio:
+    ports: !override
+      - "127.0.0.1:9090:9000"
+      - "127.0.0.1:9091:9001"

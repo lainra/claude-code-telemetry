@@ -1,7 +1,11 @@
 node_modules
 npm-debug.log*
 .env
-.env.local
+.env.*
+langfuse-credentials.txt
+langfuse-official
+logs
+.claude
 coverage
 .nyc_output
 *.log

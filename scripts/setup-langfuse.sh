@@ -25,29 +25,34 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
+LANGFUSE_VERSION="v3.227.1"
+
 # Check if langfuse-official exists
 if [ ! -d "langfuse-official" ]; then
-    echo -e "${YELLOW}⚠️  Langfuse repository not found. Cloning...${NC}"
-    git clone https://github.com/langfuse/langfuse.git langfuse-official
+    echo -e "${YELLOW}⚠️  Langfuse repository not found. Cloning ${LANGFUSE_VERSION}...${NC}"
+    git clone --depth 1 --branch "${LANGFUSE_VERSION}" https://github.com/langfuse/langfuse.git langfuse-official
 fi
 
-# Create .env file for Langfuse (always regenerate for unique credentials)
-echo -e "${BLUE}📝 Creating Langfuse configuration with unique credentials...${NC}"
+# Login (Langfuse requires an email and a password of 8+ chars); password is generated once and kept in .env.langfuse
+USER_EMAIL="${LANGFUSE_USER:-admin@local.dev}"
+USER_PASSWORD="${LANGFUSE_PASSWORD:-$(openssl rand -base64 18 | tr -d '/+=')}"
 
-# Generate unique IDs and keys
+# Keep the existing config: LANGFUSE_INIT_* only applies to a fresh database
+if [ -f .env.langfuse ]; then
+    echo -e "${GREEN}✅ Reusing existing .env.langfuse${NC}"
+else
+echo -e "${BLUE}📝 Creating Langfuse configuration...${NC}"
+
 ORG_ID="org-$(openssl rand -hex 6)"
 PROJECT_ID="proj-$(openssl rand -hex 6)"
 PUBLIC_KEY="pk-lf-$(openssl rand -hex 16)"
 SECRET_KEY="sk-lf-$(openssl rand -hex 16)"
+POSTGRES_PASSWORD="$(openssl rand -hex 16)"
+CLICKHOUSE_PASSWORD="$(openssl rand -hex 16)"
+REDIS_AUTH="$(openssl rand -hex 16)"
+MINIO_PASSWORD="$(openssl rand -hex 16)"
 
-# Use timestamp for unique email (no hostname for privacy)
-TIMESTAMP="$(date +%s)"
-USER_EMAIL="admin-${TIMESTAMP}@claude-telemetry.local"
-
-# Generate a secure password
-USER_PASSWORD="$(openssl rand -base64 12)"
-
-cat > .env.langfuse <<EOF
+(umask 077; cat > .env.langfuse <<EOF
 # Langfuse Headless Init Configuration
 LANGFUSE_INIT_ORG_ID=${ORG_ID}
 LANGFUSE_INIT_ORG_NAME=my-organization
@@ -56,37 +61,36 @@ LANGFUSE_INIT_PROJECT_NAME=claude-code-telemetry
 LANGFUSE_INIT_PROJECT_PUBLIC_KEY=${PUBLIC_KEY}
 LANGFUSE_INIT_PROJECT_SECRET_KEY=${SECRET_KEY}
 LANGFUSE_INIT_USER_EMAIL=${USER_EMAIL}
-LANGFUSE_INIT_USER_NAME=Admin User
+LANGFUSE_INIT_USER_NAME=Admin
 LANGFUSE_INIT_USER_PASSWORD=${USER_PASSWORD}
+
+# Langfuse internal secrets (upstream defaults are public)
+NEXTAUTH_SECRET=$(openssl rand -hex 32)
+SALT=$(openssl rand -hex 32)
+ENCRYPTION_KEY=$(openssl rand -hex 32)
+TELEMETRY_ENABLED=false
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+REDIS_AUTH=${REDIS_AUTH}
+MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
+LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY=${MINIO_PASSWORD}
+LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY=${MINIO_PASSWORD}
+LANGFUSE_S3_BATCH_EXPORT_SECRET_ACCESS_KEY=${MINIO_PASSWORD}
 
 # Telemetry Bridge Config
 LOG_LEVEL=info
 SESSION_TIMEOUT=3600000
 MAX_REQUEST_SIZE=10485760
 EOF
-echo -e "${GREEN}✅ Created .env.langfuse with unique configuration${NC}"
-
-# Save credentials to a file for user reference
-cat > langfuse-credentials.txt <<EOF
-🔐 LANGFUSE CREDENTIALS - SAVE THIS FILE!
-Generated: $(date)
-
-Login URL: http://localhost:3000
-Email: ${USER_EMAIL}
-Password: ${USER_PASSWORD}
-
-API Keys:
-Public Key: ${PUBLIC_KEY}
-Secret Key: ${SECRET_KEY}
-
-Organization ID: ${ORG_ID}
-Project ID: ${PROJECT_ID}
-EOF
-
-echo -e "${YELLOW}📋 Credentials saved to: langfuse-credentials.txt${NC}"
+)
+echo -e "${GREEN}✅ Created .env.langfuse (credentials are stored there)${NC}"
+fi
 
 # Load the configuration
-export $(grep -v '^#' .env.langfuse | xargs)
+set -a
+source .env.langfuse
+set +a
 
 echo -e "${BLUE}📋 This will start the following services:${NC}"
 echo "  • Official Langfuse Stack (web, worker, postgres, clickhouse, redis, minio)"
@@ -95,7 +99,7 @@ echo ""
 echo -e "${YELLOW}⚠️  Resource Requirements:${NC}"
 echo "  • ~3GB RAM"
 echo "  • ~2GB disk space"
-echo "  • Ports: 3000 (Langfuse), 4318 (Telemetry), 9090 (MinIO)"
+echo "  • Ports (127.0.0.1 only): 3000 (Langfuse), 4318 (Telemetry), 9090 (MinIO)"
 echo ""
 
 # Confirm with user
@@ -161,14 +165,8 @@ echo ""
 echo -e "${BLUE}🔑 Langfuse Login:${NC}"
 echo ""
 echo "  Email:          ${LANGFUSE_INIT_USER_EMAIL}"
-echo "  Password:       ${LANGFUSE_INIT_USER_PASSWORD}"
-echo ""
-echo -e "${BLUE}🔐 API Keys:${NC}"
-echo ""
-echo "  Public Key:     ${LANGFUSE_INIT_PROJECT_PUBLIC_KEY}"
-echo "  Secret Key:     ${LANGFUSE_INIT_PROJECT_SECRET_KEY}"
-echo ""
-echo -e "${YELLOW}⚠️  IMPORTANT: Save these API keys! Change the default password!${NC}"
+echo "  Password:       grep -oP 'USER_PASSWORD=\K.*' .env.langfuse"
+echo "  API keys:       LANGFUSE_INIT_PROJECT_{PUBLIC,SECRET}_KEY in .env.langfuse"
 echo ""
 echo "════════════════════════════════════════════════════════════════"
 echo ""
