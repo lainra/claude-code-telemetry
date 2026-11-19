@@ -8,19 +8,35 @@ const pino = require('pino')
 const { SessionHandler, extractAttributesArray } = require('./sessionHandler')
 const { processEvent } = require('./eventProcessor')
 const { processMetric } = require('./metricsProcessor')
+const { isProtobufRequest } = require('./otlpProtobuf')
 
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' })
+
+// data is a JSON Buffer/string, or an object already decoded from protobuf
+function parsePayload(data) {
+  return Buffer.isBuffer(data) || typeof data === 'string' ? JSON.parse(data.toString()) : data
+}
+
+function sendSuccess(res) {
+  if (res.req && isProtobufRequest(res.req)) {
+    // An empty Export*ServiceResponse message
+    res.writeHead(200, { 'Content-Type': 'application/x-protobuf' })
+    res.end()
+    return
+  }
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ partialSuccess: {} }))
+}
 
 /**
  * Handle OTLP traces endpoint
  */
 function handleTraces(data, res, sessions, langfuse) {
   try {
-    JSON.parse(data.toString()) // Validate JSON but Claude doesn't send traces
-    logger.debug({ size: data.length }, 'Received traces')
+    parsePayload(data) // Validate JSON but Claude doesn't send traces
+    logger.debug('Received traces')
     // Claude doesn't send traces, but handle the endpoint
-    res.writeHead(200, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ partialSuccess: {} }))
+    sendSuccess(res)
   } catch (error) {
     logger.error({ error }, 'Error parsing traces')
     res.writeHead(400, { 'Content-Type': 'application/json' })
@@ -33,8 +49,8 @@ function handleTraces(data, res, sessions, langfuse) {
  */
 function handleMetrics(data, res, sessions, langfuse) {
   try {
-    const metrics = JSON.parse(data.toString())
-    logger.info({ size: data.length }, 'Received metrics')
+    const metrics = parsePayload(data)
+    logger.info('Received metrics')
 
     // Log the actual metrics structure
     if (logger.level === 'debug') {
@@ -80,8 +96,7 @@ function handleMetrics(data, res, sessions, langfuse) {
       }
     }
 
-    res.writeHead(200, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ partialSuccess: {} }))
+    sendSuccess(res)
   } catch (error) {
     logger.error({ error: error.message, stack: error.stack }, 'Error processing metrics')
     res.writeHead(400, { 'Content-Type': 'application/json' })
@@ -94,8 +109,8 @@ function handleMetrics(data, res, sessions, langfuse) {
  */
 function handleLogs(data, res, sessions, langfuse) {
   try {
-    const logs = JSON.parse(data.toString())
-    logger.debug({ size: data.length }, 'Received logs')
+    const logs = parsePayload(data)
+    logger.debug('Received logs')
 
     // Process each resource log
     if (logs && logs.resourceLogs) {
@@ -143,8 +158,7 @@ function handleLogs(data, res, sessions, langfuse) {
       }
     }
 
-    res.writeHead(200, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ partialSuccess: {} }))
+    sendSuccess(res)
   } catch (error) {
     logger.error({ error: error.message, stack: error.stack }, 'Error processing logs')
     res.writeHead(400, { 'Content-Type': 'application/json' })

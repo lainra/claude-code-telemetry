@@ -25,6 +25,7 @@ const { Langfuse } = require('langfuse')
 const pino = require('pino')
 const { retry } = require('./sessionHandler')
 const { handleTraces, handleMetrics, handleLogs, handleHealthCheck } = require('./requestHandlers')
+const { isProtobufRequest, decodeOtlpProtobuf } = require('./otlpProtobuf')
 const {
   validateConfig: validateConfigHelper,
   createConfig,
@@ -132,7 +133,17 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       // Route based on path
       try {
-        const body = Buffer.concat(chunks)
+        let body = Buffer.concat(chunks)
+        if (isProtobufRequest(req)) {
+          try {
+            body = decodeOtlpProtobuf(req.url, body) ?? body
+          } catch (error) {
+            logger.warn({ error: error.message, url: req.url }, 'Invalid OTLP protobuf payload')
+            res.writeHead(400, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Invalid protobuf payload' }))
+            return
+          }
+        }
         if (req.url === '/v1/traces') {
           handleTraces(body, res, sessions, langfuse)
         } else if (req.url === '/v1/metrics') {
