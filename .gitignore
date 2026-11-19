@@ -10,6 +10,7 @@ node_modules/
 
 # Credentials
 langfuse-credentials.txt
+langfuse-official/
 
 # Test outputs
 test-output.txt

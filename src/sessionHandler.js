@@ -211,12 +211,14 @@ class SessionHandler {
       model,
       input: attrs.input || `[${modelType} request]`,
       output: attrs.output || attrs.response || `[${modelType} response]`,
-      usage: {
+      usageDetails: {
         input: inputTokens,
         output: outputTokens,
-        total: totalTokens,
-        unit: 'TOKENS',
+        cache_read_input_tokens: cacheReadTokens,
+        cache_creation_input_tokens: cacheCreationTokens,
       },
+      // Claude reports the real cost; Langfuse has no price for newer model names
+      costDetails: { total: cost },
       metadata: {
         cost,
         requestId,

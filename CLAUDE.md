@@ -113,7 +113,7 @@ YOUR DASHBOARD ACCESS:
 📧 Email: admin@example.com
 🔑 Password: [unique password generated for you]
 
-I've also saved these in a file called 'langfuse-credentials.txt'
+These are stored in the file '.env.langfuse'
 "
 ```
 
